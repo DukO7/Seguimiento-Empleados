@@ -1,0 +1,48 @@
+/* CustomAlert.css */
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Asegura que el modal esté en frente */
+  }
+  
+  .modal-content {
+    background-color: white !important; /* Forzar fondo blanco */
+    opacity: 1 !important; /* Forzar opacidad al 100% */
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1001; /* Asegura que el contenido del modal esté en frente */
+  }
+  
+  .spinner {
+    border: 4px solid rgba(0, 0, 255, 0.1);
+    border-left-color: #0000ff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+  }
+  
+  .message {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  

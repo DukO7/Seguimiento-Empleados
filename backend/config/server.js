@@ -41,25 +41,25 @@ db.connect(err => {
 });
 
 //Bloque para registrar empleados
-app.post('/register', async (req, res) => {
-  try {
-    const { email, nick, password, edad } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
+// app.post('/register', async (req, res) => {
+//   try {
+//     const { email, nick, password, edad } = req.body;
+//     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const query = 'INSERT INTO users (email, nick, password, edad) VALUES (?, ?, ?, ?)';
-    db.query(query, [email, nick, hashedPassword, edad], (err, results) => {
-      if (err) {
-        console.error('Error al registrar usuario en la base de datos:', err);
-        res.status(400).send('Error al registrar usuario');
-      } else {
-        res.status(201).send('Usuario registrado');
-      }
-    });
-  } catch (error) {
-    console.error('Error en el registro de usuario:', error);
-    res.status(400).send('Error en el registro de usuario');
-  }
-});
+//     const query = 'INSERT INTO users (email, nick, password, edad) VALUES (?, ?, ?, ?)';
+//     db.query(query, [email, nick, hashedPassword, edad], (err, results) => {
+//       if (err) {
+//         console.error('Error al registrar usuario en la base de datos:', err);
+//         res.status(400).send('Error al registrar usuario');
+//       } else {
+//         res.status(201).send('Usuario registrado');
+//       }
+//     });
+//   } catch (error) {
+//     console.error('Error en el registro de usuario:', error);
+//     res.status(400).send('Error en el registro de usuario');
+//   }
+// });
 
 //Bloque para login
 app.post('/login', async (req, res) => {
