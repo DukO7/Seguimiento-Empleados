@@ -153,7 +153,7 @@ const Login = () => {
         </svg>
       </div>
       <div className="footerby">
-        <h1>Empleados</h1>
+        <h1>Seguimiento de Empleados</h1>
       </div>
     </div>
   );

@@ -58,7 +58,7 @@ body {
       transform: translateY(0);
     }
     50% {
-      transform: translateY(-10px);
+      transform: translateY(-7px);
     }
   }
   .login-box h2 {
@@ -118,15 +118,15 @@ body {
     letter-spacing: 4px;
     border-radius: 50px;
     background: transparent;
-    border: 2px solid gray;
+    border: 2px solid white;
     box-shadow: 0 0 10px #c7c9c9, 0 0 20px #c7c9c9, 0 0 40px #c7c9c9;
     z-index: 1;
   }
   
   .login-button:hover {
-    background: #abd6d6;
+    background: #db5019;
     color: #000000;
-    box-shadow: 0 0 5px #abd6d6, 0 0 10px #abd6d6, 0 0 20px #abd6d6;
+    box-shadow: 0 0 5px #db5019, 0 0 10px #db5019, 0 0 20px #db5019;
   }
   
   .login-registro {
