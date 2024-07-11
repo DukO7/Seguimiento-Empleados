@@ -5,7 +5,8 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
 const app = express();
-
+app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ limit: '20mb', extended: true }));
 
 app.use(express.json());
 
@@ -133,6 +134,7 @@ app.put('/empleado/:id', (req, res) => {
       res.status(500).send('Error al actualizar empleado');
       return;
     }
+    
     res.send('Empleado actualizado');
   });
 });

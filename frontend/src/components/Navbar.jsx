@@ -45,7 +45,7 @@ const Navbar = ({ user }) => {
             <Link to="/Inicio" style={{ textDecoration: 'none', color: 'inherit' }}>
               <Button color="inherit">Empleados</Button>
             </Link>
-            <Link to="/Rifa" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Link to="/Beneficiarios" style={{ textDecoration: 'none', color: 'inherit' }}>
               <Button color="inherit">Beneficiarios</Button>
             </Link>
             
