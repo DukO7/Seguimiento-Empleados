@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { DataGrid, GridActionsCellItem, GridToolbar, GridToolbarQuickFilter } from "@mui/x-data-grid";
 import { esES } from "@mui/x-data-grid/locales";
 import axios from "axios";
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar, DialogContentText } from "@mui/material";
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar, DialogContentText,Card, CardContent, Typography, CardActions} from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import EditIcon from '@mui/icons-material/Edit';
@@ -20,6 +20,8 @@ const EmployeeTable = () => {
     const [openedit, setOpenEdit] = useState(false);
     const [openever, setOpenVer] = useState(false);
     const handleCloseVer = () => setOpenVer(false);
+    const [openopcion, setOpenOpcion] = useState(false);
+    const handleCloseOpcion = () => setOpenOpcion(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const handleCloseEdit = () => setOpenEdit(false);
@@ -40,6 +42,11 @@ const EmployeeTable = () => {
         console.log('Row data:', row);
         setVerData(row);
         setOpenVer(true);
+    };
+    const handleOpcion = (row) => {
+        console.log('Row data:', row);
+        setVerData(row);
+        setOpenOpcion(true);
     };
 
     const handleFileChange = (event) => {
@@ -236,6 +243,14 @@ const EmployeeTable = () => {
             },
         },
     });
+    //Control de Ver modal Beneficiarios
+    const handleOpenVerBeneficiarios = () => {
+        console.log("Abrir modal para ver beneficiarios");
+    };
+    //Control de Agregar modal Beneficiarios
+    const handleOpenAgregarBeneficiarios = () => {
+        console.log("Abrir modal para agregar beneficiarios");
+    };
     //Columnas y formateo de datagrid
     const columns = [
         {
@@ -291,7 +306,7 @@ const EmployeeTable = () => {
             width: 110,
             getActions: (params) => [
                 <Tooltip title="Añadir y ver Beneficiarios" placement="top">
-                    <GridActionsCellItem icon={<Diversity3Icon sx={{ color: '#353432' }} />} label="Beneficiarios" onClick={() => handleVer(params.row)} />
+                    <GridActionsCellItem icon={<Diversity3Icon sx={{ color: '#353432' }} />} label="Beneficiarios" onClick={() => handleOpcion(params.row)} />
                 </Tooltip>
             ],
         },
@@ -649,6 +664,7 @@ const EmployeeTable = () => {
                     </MuiAlert>
                 </Snackbar>
             </div>
+            {/* Modal de eliminacion */}
             <Dialog
                 open={openDeleteDialog}
                 onClose={() => setOpenDeleteDialog(false)}
@@ -684,6 +700,7 @@ const EmployeeTable = () => {
                     Empleado Eliminado correctamente!
                 </MuiAlert>
             </Snackbar>
+            {/* Modal de usuario y contraseña */}
             <Dialog open={openever} onClose={handleCloseVer}>
                 <DialogTitle>Usuario y Contraseña</DialogTitle>
                 <DialogContent>
@@ -713,6 +730,61 @@ const EmployeeTable = () => {
 
                 </DialogActions>
             </Dialog>
+            {/* Modal prueba */}
+            <Dialog open={openopcion} onClose={handleCloseOpcion}>
+    <DialogTitle>Selecciona una acción</DialogTitle>
+    <DialogContent>
+        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'space-between' }}>
+            <Card sx={{ 
+                padding: 2, 
+                width: '48%', 
+                transition: 'transform 0.3s', // Transición suave para el transform
+                '&:hover': {
+                    transform: 'scale(1.05)' // Agrandamiento sutil al pasar el ratón
+                }
+            }}>
+                <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                        Ver Beneficiarios
+                    </Typography>
+                    <Typography variant="body2">
+                        Consulta la lista de beneficiarios registrados de este empleado.
+                    </Typography>
+                </CardContent>
+                <CardActions>
+                    <Button size="small" onClick={handleOpenVerBeneficiarios}>
+                        Abrir
+                    </Button>
+                </CardActions>
+            </Card>
+            <Card sx={{ 
+                padding: 2, 
+                width: '48%', 
+                transition: 'transform 0.3s', // Transición suave para el transform
+                '&:hover': {
+                    transform: 'scale(1.05)' // Agrandamiento sutil al pasar el ratón
+                }
+            }}>
+                <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                        Agregar Beneficiarios
+                    </Typography>
+                    <Typography variant="body2">
+                        Añade un nuevo beneficiario al sistema.
+                    </Typography>
+                </CardContent>
+                <CardActions>
+                    <Button size="small" onClick={handleOpenAgregarBeneficiarios}>
+                        Abrir
+                    </Button>
+                </CardActions>
+            </Card>
+        </Box>
+    </DialogContent>
+    <DialogActions>
+        <Button onClick={handleCloseOpcion}>Cerrar</Button>
+    </DialogActions>
+</Dialog>
         </div>
     );
 };
