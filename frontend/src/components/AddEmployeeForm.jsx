@@ -14,7 +14,7 @@ const AddEmployeeForm = ({ open, handleClose }) => {
         usuario:'',
         contraseña:''
     });
-    const [openSnackbar, setOpenSnackbar] = useState(true);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
     const handleChange = (e) => {
         setEmployee({
             ...employee,
@@ -28,6 +28,7 @@ const AddEmployeeForm = ({ open, handleClose }) => {
             await axios.post('http://localhost:5000/empleado', employee);
             setOpenSnackbar(true);
             handleClose();  // Cierra el modal después de enviar el formulario
+            
         } catch (error) {
             console.error('Error al agregar empleado:', error);
         }

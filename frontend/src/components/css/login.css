@@ -1,7 +1,7 @@
 body {
     margin: 0;
     padding: 0;
-    background: url('../img/login2.jpg') no-repeat center center fixed;
+    background: url('../img/fondo1.jpeg') no-repeat center center fixed;
     background-size: cover;
     font-family: sans-serif;
     height: 100vh; /* Ajusta el alto según necesites */
@@ -26,11 +26,10 @@ body {
   .main-visual {
     max-height: calc(100vh - 64px); /* Ajusta según el tamaño de tu barra de navegación si tienes una */
     overflow-y: auto; /* Añade scroll vertical si es necesario */
-    
-    width: 60%;
+    width: 75%;
     position: absolute;
     margin-top: 15%;
-    top: 25%;
+    top: 10%;
     left: 50%;
     transform: translate(-50%, -50%);
     background: rgba(0, 0, 0, 0.5);

@@ -105,12 +105,12 @@ app.get('/Obempleados', (req, res) => {
 
 //Bloque para ingresar empleado
 app.post('/empleado', (req, res) => {
-  const { nombre, apellido_paterno, apellido_materno, fecha_ingreso, fecha_nacimiento, puesto, salario, usuario, contraseña } = req.body;
+  const { nombre, apellido_paterno, apellido_materno, fecha_ingreso, fecha_nacimiento, puesto, salario, usuario, contraseña,foto } = req.body;
   const id = uuidv4(); // Generar un UID para el empleado
   const hashedPassword = bcrypt.hashSync(contraseña, 10); // Hashear la contraseña
 
-  const query = 'INSERT INTO empleados (id, nombre, apellido_paterno, apellido_materno, fecha_ingreso, fecha_nacimiento, puesto, salario, usuario, contraseña) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-  db.query(query, [id, nombre, apellido_paterno, apellido_materno, fecha_ingreso, fecha_nacimiento, puesto, salario, usuario, hashedPassword], (err, results) => {
+  const query = 'INSERT INTO empleados (id, nombre, apellido_paterno, apellido_materno, fecha_ingreso, fecha_nacimiento, puesto, salario, usuario, contraseña,fotografia) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)';
+  db.query(query, [id, nombre, apellido_paterno, apellido_materno, fecha_ingreso, fecha_nacimiento, puesto, salario, usuario, hashedPassword,foto], (err, results) => {
     if (err) {
       console.error('Error al agregar empleado:', err);
       res.status(500).send('Error al agregar empleado');
@@ -138,18 +138,18 @@ app.put('/empleado/:id', (req, res) => {
 });
 
 //Bloque para eliminar empleado
-app.delete('/empleado/:id', (req, res) => {
-  const { id } = req.params;
-  const query = 'DELETE FROM empleados WHERE id = ?';
-  db.query(query, [id], (err, results) => {
-    if (err) {
-      console.error('Error al eliminar empleado:', err);
-      res.status(500).send('Error al eliminar empleado');
-      return;
-    }
-    res.send('Empleado eliminado');
+app.delete('/empleadodelete/:id', (req, res) => {
+    const { id } = req.params; // Cambia `uuid` a `id` aquí
+    const query = 'DELETE FROM empleados WHERE id = ?';
+    db.query(query, [id], (err, results) => {
+      if (err) {
+        console.error('Error al eliminar empleado:', err);
+        res.status(500).send('Error al eliminar empleado');
+        return;
+      }
+      res.send('Empleado eliminado');
+    });
   });
-});
 
 //Bloque para obtener todos los beneficiarios
 app.get('/beneficiarios', (req, res) => {
