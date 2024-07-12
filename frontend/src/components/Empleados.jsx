@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import { esES } from "@mui/x-data-grid/locales";
 import axios from "axios";
@@ -13,11 +13,22 @@ import Diversity3Icon from '@mui/icons-material/Diversity3';
 import Box from '@mui/material/Box';
 import AgregarEmpleado from './AgregarEmpleado';
 import AgregarBeneficiario from './AgregarBeneficiario';
+import { UserContext } from './Context/UserContext';
+import { useNavigate } from "react-router-dom";
 const EmployeeTable = () => {
+    const { user } = useContext(UserContext);
+    console.log('trae datos1:',user);
+    const navigate = useNavigate();
     useEffect(() => {
-        fetchEmployees();
-    }, []);
-
+        
+        if (!user) {
+            navigate("/");
+        } else {
+            fetchEmployees();
+        }
+    }, [user,navigate]);
+    
+    
     const [open, setOpen] = useState(false);
     const [openedit, setOpenEdit] = useState(false);
     const [openever, setOpenVer] = useState(false);
@@ -90,10 +101,10 @@ const EmployeeTable = () => {
                 ...employeeData,
                 empleado_uuid: verData.uuid // Asume que verData tiene una propiedad uuid
             };
-    
+
             const response = await axios.post("http://localhost:5000/beneficiarios", dataToSend);
             console.log("Beneficiario agregado correctamente:", response.data);
-            
+
             // Suponiendo que quieras refrescar algunos datos después de la operación
             await fetchEmployees(); // Asumiendo que esta función refresca los datos necesarios
             setOpenSnackbar(true); // Abre el snackbar para indicar éxito
@@ -244,11 +255,7 @@ const EmployeeTable = () => {
             headerName: "Fotografía",
             width: 90,
             renderCell: (params) => (
-                <img
-                    src={`data:image/jpeg;base64,${params.value}`}
-                    alt="Foto"
-                    style={{ height: 50, width: 50, borderRadius: "50%", padding: 2 }}
-                />
+                <img src={`data:image/jpeg;base64,${params.value}`} alt="Foto" style={{ height: 50, width: 50, borderRadius: "50%", padding: 2 }}/>
             ),
         },
         { field: "nombre", headerName: "Nombre", width: 130 },
@@ -273,44 +280,64 @@ const EmployeeTable = () => {
             headerName: "Salario",
             width: 80,
             renderCell: (params) => `$${params.value.toLocaleString('es-MX')}`,
-        },
-        {
-            field: 'sensible',
-            type: 'actions',
-            headerName: 'Usuario',
-            width: 80,
-            getActions: (params) => [
-                <Tooltip title="Ver Usuario y Contraseña" placement="top">
-                    <GridActionsCellItem icon={<VisibilityIcon sx={{ color: '#353432' }} />} label="Ver" onClick={() => handleVer(params.row)} />
-                </Tooltip>
-            ],
-        },
-        {
-            field: 'beneficiarios',
-            type: 'actions',
-            headerName: 'Beneficiarios',
-            width: 110,
-            getActions: (params) => [
-                <Tooltip title="Añadir y ver Beneficiarios" placement="top">
-                    <GridActionsCellItem icon={<Diversity3Icon sx={{ color: '#353432' }} />} label="Beneficiarios" onClick={() => handleOpcion(params.row)} />
-                </Tooltip>
-            ],
-        },
-        {
-            field: 'actions',
-            type: 'actions',
-            headerName: 'Acciones',
-            width: 90,
-            getActions: (params) => [
-                <Tooltip title="Editar Empleado" placement="top">
-                    <GridActionsCellItem icon={<EditIcon sx={{ color: '#243757' }} />} label="Editar" onClick={() => handleEdit(params.row)} />
-                </Tooltip>,
-                <Tooltip title="Eliminar Empleado" placement="top">
-                    <GridActionsCellItem icon={<DeleteIcon sx={{ color: 'red' }} />} label="Eliminar" onClick={() => handleDelete(params.row.uuid)} />
-                </Tooltip>,
-            ],
-        },
+        }
     ];
+    
+    // Condicionales para añadir o no columnas de administrador y usuario
+    if (user && user.user.user.es_admin) {
+        columns.push(
+            {
+                field: 'sensible',
+                type: 'actions',
+                headerName: 'Usuario',
+                width: 80,
+                getActions: (params) => [
+                    <Tooltip title="Ver Usuario y Contraseña" placement="top">
+                        <GridActionsCellItem icon={<VisibilityIcon sx={{ color: '#353432' }} />} label="Ver" onClick={() => handleVer(params.row)} />
+                    </Tooltip>
+                ],
+            },
+            {
+                field: 'beneficiarios',
+                type: 'actions',
+                headerName: 'Beneficiarios',
+                width: 110,
+                getActions: (params) => [
+                    <Tooltip title="Añadir y ver Beneficiarios" placement="top">
+                        <GridActionsCellItem icon={<Diversity3Icon sx={{ color: '#353432' }} />} label="Beneficiarios" onClick={() => handleOpcion(params.row)} />
+                    </Tooltip>
+                ],
+            },
+            {
+                field: 'actions',
+                type: 'actions',
+                headerName: 'Acciones',
+                width: 90,
+                getActions: (params) => [
+                    <Tooltip title="Editar Empleado" placement="top">
+                        <GridActionsCellItem icon={<EditIcon sx={{ color: '#243757' }} />} label="Editar" onClick={() => handleEdit(params.row)} />
+                    </Tooltip>,
+                    <Tooltip title="Eliminar Empleado" placement="top">
+                        <GridActionsCellItem icon={<DeleteIcon sx={{ color: 'red' }} />} label="Eliminar" onClick={() => handleDelete(params.row.uuid)} />
+                    </Tooltip>,
+                ],
+            }
+        );
+    } else {
+        columns.push(
+            {
+                field: 'beneficiarios',
+                type: 'actions',
+                headerName: 'Beneficiarios',
+                width: 110,
+                getActions: (params) => [
+                    <Tooltip title="Ver Beneficiarios" placement="top">
+                        <GridActionsCellItem icon={<Diversity3Icon sx={{ color: '#353432' }} />} label="Beneficiarios" onClick={() => handleOpcion(params.row)} />
+                    </Tooltip>
+                ],
+            }
+        );
+    }
 
     const [filterText, setFilterText] = useState('');
     const [rows, setRows] = useState([]);
@@ -349,20 +376,22 @@ const EmployeeTable = () => {
             <div className="main-visual" style={{ padding: "20px", overflowY: "auto", maxHeight: "calc(100vh - 64px)", }}>
 
                 <Box sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', mt: '-70px', justifyContent: 'space-between', }}>
-                    <Button
-                        variant="contained"
-                        onClick={handleOpenAddDialog}
-                        sx={{
-                            top: '70px', position: 'relative',
-                            backgroundColor: '#db5019', // Color naranja, cambia esto por cualquier color en formato HEX
-                            color: 'white', // Texto blanco
-                            '&:hover': {
-                                backgroundColor: '#e64a19', // Color al pasar el mouse, más oscuro que el original
-                            }
-                        }}
-                    >
-                        Añadir Empleado
-                    </Button>
+                    {user?.user.user.es_admin && (
+                        <Button
+                            variant="contained"
+                            onClick={handleOpenAddDialog}
+                            sx={{
+                                top: '70px', position: 'relative',
+                                backgroundColor: '#db5019', // Color naranja
+                                color: 'white', // Texto blanco
+                                '&:hover': {
+                                    backgroundColor: '#e64a19', // Color al pasar el mouse, más oscuro que el original
+                                }
+                            }}
+                        >
+                            Añadir Empleado
+                        </Button>
+                    )}
                     <TextField
                         sx={{
                             width: '30%',
@@ -420,11 +449,11 @@ const EmployeeTable = () => {
                 />
             </div>
             <div>
-            <AgregarBeneficiario
+                <AgregarBeneficiario
                     open={isAddDialogOpenB}
                     onClose={handleCloseBeneficiario}
                     onSubmit={handleSubmitBene}
-                /> 
+                />
             </div>
             <div>
                 <Dialog open={openedit} onClose={handleCloseEdit}>
@@ -691,7 +720,7 @@ const EmployeeTable = () => {
                             ]}
                             pageSize={5}
                             rowsPerPageOptions={[5, 10, 20]}
-                            style={{ height: 300 }} 
+                            style={{ height: 300 }}
                             localeText={esES.components.MuiDataGrid.defaultProps.localeText}
                         />
                     </ThemeProvider>

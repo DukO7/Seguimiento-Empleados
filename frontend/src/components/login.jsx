@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import logo from "./img/logo.png";
 import CustomAlert from "./CustomAlert";
-// import { UserContext } from './UserContext';
+import { UserContext } from './Context/UserContext';
 import {
   Dialog,
   DialogTitle,
@@ -14,12 +14,11 @@ import {
 } from "@mui/material";
 const Login = () => {
   const [showAlert, setShowAlert] = useState(false);
-  // const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [usuario, setUsuario] = useState("");
+  const [contraseña, setContraseña] = useState("");
   const [error, setError] = useState("");
-
+  const { setUser } = useContext(UserContext);
   const [open, setOpen] = useState(false);
   const [open1, setOpen1] = useState(false);
   const handleOpen = () => {
@@ -43,10 +42,10 @@ const Login = () => {
     event.preventDefault();
     try {
       const response = await axios.post(
-        "https://ffbb-187-148-8-179.ngrok-free.app/login",
+        "http://localhost:5000/login",
         {
-          email: username,
-          password: password,
+          usuario: usuario,
+          contraseña: contraseña,
         }
       );
 
@@ -57,8 +56,9 @@ const Login = () => {
         setTimeout(() => {
           setShowAlert(false);
           console.log("prueba:", response.data);
+          setUser({ user });
           //   setUser({ user }); // Guarda los datos del usuario en el contexto
-          navigate("/Home");
+          navigate("/inicio");
         }, 2000); // Muestra el alert por 3 segundos antes de navegar
       } else {
         setError("Credenciales incorrectas. Por favor, inténtelo de nuevo.");
@@ -74,25 +74,25 @@ const Login = () => {
   return (
     <div>
       <CustomAlert visible={showAlert} message="Iniciando Sesión..." />
-      <div class="firework"></div>
-      <div class="firework"></div>
-      <div class="firework"></div>
+      <div className="firework"></div>
+      <div className="firework"></div>
+      <div className="firework"></div>
       <div className="login-box">
         <h2>Iniciar Sesión</h2>
         <form>
           <div className="user-box">
             <input
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={usuario}
+              onChange={(e) => setUsuario(e.target.value)}
             />
-            <label>Correo Electrónico</label>
+            <label>Usuario</label>
           </div>
           <div className="user-box">
             <input
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={contraseña}
+              onChange={(e) => setContraseña(e.target.value)}
             />
             <label>Contraseña</label>
           </div>
@@ -142,7 +142,7 @@ const Login = () => {
             <filter id="drop-shadow">
               <feGaussianBlur in="SourceAlpha" stdDeviation="2.5" />
               <feOffset dx="3" dy="3" result="offsetblur" />
-              <feFlood flood-color="rgba(255, 255, 255, 0.7)" />
+              <feFlood floodColor="rgba(255, 255, 255, 0.7)" />
               <feComposite in2="offsetblur" operator="in" />
               <feMerge>
                 <feMergeNode />

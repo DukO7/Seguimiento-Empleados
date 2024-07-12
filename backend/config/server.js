@@ -63,34 +63,34 @@ db.connect(err => {
 // });
 
 //Bloque para login
-app.post('/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const query = 'SELECT * FROM users WHERE email = ?';
+app.post('/login', (req, res) => {
+    const { usuario, contraseña } = req.body;
 
-    db.query(query, [email], async (err, results) => {
-      if (err) {
-        return res.status(500).send(err.message);
-      }
-
-      if (results.length === 0) {
-        return res.status(400).send('Usuario no encontrado');
-      }
-
-      const user = results[0];
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(400).send('Contraseña incorrecta');
-      }
-
-      const token = jwt.sign({ id: user.id }, 'secret', { expiresIn: '1h' });
-      res.json({ token, user });
+    // Supongamos que la tabla de empleados tiene campos para usuario, contraseña y es_admin
+    const query = 'SELECT id, usuario, contraseña, es_admin FROM empleados WHERE usuario = ?';
+    db.query(query, [usuario], (err, results) => {
+        if (err) {
+            console.error('Error al buscar empleado:', err);
+            res.status(500).send('Error al buscar empleado');
+            return;
+        }
+        if (results.length > 0) {
+            const user = results[0];
+            const isPasswordValid = bcrypt.compareSync(contraseña, user.contraseña);
+            if (isPasswordValid) {
+                res.json({
+                    usuario: user.usuario,
+                    es_admin: user.es_admin,
+                    id: user.id // Puedes enviar también el id si es necesario
+                });
+            } else {
+                res.status(401).send('Credenciales no válidas');
+            }
+        } else {
+            res.status(404).send('Usuario no encontrado');
+        }
     });
-  } catch (error) {
-    res.status(400).send(error.message);
-  }
 });
-
 //Bloque obtencion de empleados
 app.get('/Obempleados', (req, res) => {
   const query = 'SELECT * FROM empleados';

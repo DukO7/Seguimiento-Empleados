@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { DataGrid, GridActionsCellItem} from "@mui/x-data-grid";
 import { esES } from "@mui/x-data-grid/locales";
 import axios from "axios";
@@ -9,12 +9,22 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Tooltip from '@mui/material/Tooltip';
 import Box from '@mui/material/Box';
-
-const EmployeeTable = () => {
+import { UserContext } from './Context/UserContext';
+import { useNavigate } from "react-router-dom";
+const Beneficiarios = () => {
+    const { user } = useContext(UserContext);
+    console.log('trae datos:',user);
+    const navigate = useNavigate();
     useEffect(() => {
-        fetchEmployees();
-    }, []);
-
+        
+        if (!user) {
+            navigate("/");
+        } else {
+            fetchEmployees();
+        }
+    }, [user,navigate]);
+    
+    
     const [open, setOpen] = useState(false);
     const [openedit, setOpenEdit] = useState(false);
     const [openever, setOpenVer] = useState(false);
@@ -150,7 +160,9 @@ const EmployeeTable = () => {
         { field: "apellido_paterno", headerName: "Apellido Paterno Beneficiario", width: 210 },
         { field: "apellido_materno", headerName: "Apellido Materno Beneficiario", width: 210 },
         { field: "parentesco", headerName: "Parentesco", width: 110 },
-        {
+    ]
+    if (user && user.user.user.es_admin) {
+        columns.push({
             field: 'actions',
             type: 'actions',
             headerName: 'Acciones',
@@ -163,8 +175,8 @@ const EmployeeTable = () => {
                     <GridActionsCellItem icon={<DeleteIcon sx={{ color: 'red' }} />} label="Eliminar" onClick={() => handleDelete(params.row.uuid)} />
                 </Tooltip>,
             ],
-        },
-    ];
+        });
+    }
 
     const [filterText, setFilterText] = useState('');
     const [rows, setRows] = useState([]);
@@ -284,4 +296,4 @@ const EmployeeTable = () => {
     );
 };
 
-export default EmployeeTable;
+export default Beneficiarios;

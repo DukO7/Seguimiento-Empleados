@@ -4,8 +4,9 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./components/login";
 import Inicio from "./components/VistaE";
 import Beneficiarios from "./components/VistaB";
+import { UserProvider } from './components/Context/UserContext';
 const AppRouter = () => (
-
+<UserProvider>
   <Router>
     <Routes>
       <Route path="/" element={<Login />} />
@@ -13,7 +14,7 @@ const AppRouter = () => (
       <Route path="/Beneficiarios" element={<Beneficiarios />} />
     </Routes>
   </Router>
-
+  </UserProvider>
 );
 
 export default AppRouter;
