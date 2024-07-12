@@ -2,8 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import Login from "./components/login";
-import Inicio from "./components/Home";
-import Beneficiarios from "./components/Beneficiarios";
+import Inicio from "./components/VistaE";
+import Beneficiarios from "./components/VistaB";
 const AppRouter = () => (
 
   <Router>

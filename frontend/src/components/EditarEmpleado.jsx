@@ -1,44 +1,81 @@
 import React, { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar, DialogContentText,Card, CardContent, Typography, CardActions} from "@mui/material";
+import Box from '@mui/material/Box';
+import MuiAlert from "@mui/material/Alert";
 
 function AddEmployeeDialog({ open, onClose, onSubmit }) {
-  const [employee, setEmployee] = useState({
-    nombre: "",
-    apellido_paterno: "",
-    apellido_materno: "",
-    fecha_ingreso: "",
-    fecha_nacimiento: "",
-    puesto: "",
-    salario: "",
-    usuario: "",
-    contraseña: "",
-    foto: "",
-  });
+    const [editData, setEditData] = useState({
+        id: '',
+        nombre: "",
+        apellido_paterno: "",
+        apellido_materno: "",
+        fecha_ingreso: "",
+        fecha_nacimiento: "",
+        puesto: "",
+        salario: "",
+        usuario: "",
+        contraseña: "",
+        foto: "",
+    });
+  const [openSnackbar, setOpenSnackbarEdit] = useState(false);
+  const handleClose = () => {
+    onClose(); // Llama directamente a onClose que es la prop para cerrar el diálogo
+};
+  const [opene, setOpen] = useState(false);
+ 
+const handleOpenSnackbar = () => {
+    setOpenSnackbarEdit(true);
+};
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEmployee({...employee, [name]: value});
-  };
-
-  const handleSubmit = () => {
-    onSubmit(employee);
-    onClose();
-  };
-
+const handleSave = async () => {
+    try {
+        await onSubmit(editData);
+        handleOpenSnackbar(); // Abre el Snackbar si la solicitud es exitosa
+        onClose(); // Cierra el diálogo
+    } catch (error) {
+        console.error("Error al agregar empleado:", error);
+    }
+};
+const handleCloseSnackbarEdit = (event, reason) => {
+    if (reason === "clickaway") {
+        return;
+    }
+    setOpenSnackbarEdit(false);
+};
+// const handleFileChange = (event) => {
+//     const file = event.target.files[0];
+//     if (file) {
+//         const reader = new FileReader();
+//         reader.onloadend = () => {
+//             setEmployee({
+//                 ...employee,
+//                 foto: reader.result.split(",")[1], // Guarda solo la parte base64, sin el prefijo de datos
+//             });
+//         };
+//         reader.readAsDataURL(file);
+//     }
+// };
+const handleChangeEdit = (event) => {
+    const { name, value } = event.target;
+    setEditData(prevData => ({
+        ...prevData,
+        [name]: value
+    }));
+};
   return (
     <div>
          <Dialog open={open} onClose={handleClose}>
-                    <DialogTitle>Añadir Nuevo Empleado</DialogTitle>
+                    <DialogTitle>Editar Empleado</DialogTitle>
                     <DialogContent>
                         <TextField
-                            autoFocus
                             margin="dense"
                             name="nombre"
                             label="Nombre"
                             type="text"
                             fullWidth
                             variant="outlined"
-                            onChange={handleChange}
+                            value={editData.nombre}
+                            onChange={handleChangeEdit}
                         />
                         <TextField
                             margin="dense"
@@ -47,7 +84,8 @@ function AddEmployeeDialog({ open, onClose, onSubmit }) {
                             type="text"
                             fullWidth
                             variant="outlined"
-                            onChange={handleChange}
+                            value={editData.apellido_paterno}
+                            onChange={handleChangeEdit}
                         />
                         <TextField
                             margin="dense"
@@ -56,7 +94,8 @@ function AddEmployeeDialog({ open, onClose, onSubmit }) {
                             type="text"
                             fullWidth
                             variant="outlined"
-                            onChange={handleChange}
+                            value={editData.apellido_materno}
+                            onChange={handleChangeEdit}
                         />
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                             <TextField
@@ -68,8 +107,9 @@ function AddEmployeeDialog({ open, onClose, onSubmit }) {
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
-                                onChange={handleChange}
-                                sx={{ width: '48%' }}
+                                value={editData.fecha_ingreso}
+                                onChange={handleChangeEdit}
+                                sx={{ width: '48%' }} // Establece un ancho que permita que ambos TextField quepan en una sola línea
                             />
                             <TextField
                                 margin="dense"
@@ -80,8 +120,8 @@ function AddEmployeeDialog({ open, onClose, onSubmit }) {
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
-                                onChange={handleChange}
-                                sx={{ width: '48%' }}
+                                onChange={handleChangeEdit}
+                                sx={{ width: '48%' }} // Establece un ancho que permita que ambos TextField quepan en una sola línea
                             />
                         </Box>
                         <TextField
@@ -91,7 +131,8 @@ function AddEmployeeDialog({ open, onClose, onSubmit }) {
                             type="text"
                             fullWidth
                             variant="outlined"
-                            onChange={handleChange}
+                            value={editData.puesto}
+                            onChange={handleChangeEdit}
                         />
                         <TextField
                             margin="dense"
@@ -100,7 +141,8 @@ function AddEmployeeDialog({ open, onClose, onSubmit }) {
                             type="number"
                             fullWidth
                             variant="outlined"
-                            onChange={handleChange}
+                            value={editData.salario}
+                            onChange={handleChangeEdit}
                         />
                         <TextField
                             margin="dense"
@@ -109,48 +151,36 @@ function AddEmployeeDialog({ open, onClose, onSubmit }) {
                             type="text"
                             fullWidth
                             variant="outlined"
-                            value={employee.usuario || ''}
-                            onChange={handleChange}
+                            value={editData.usuario}
+                            onChange={handleChangeEdit}
                         />
                         <TextField
                             margin="dense"
                             name="contraseña"
-                            label="Contraseña"
+                            label="Nueva Contraseña"
                             type="text"
                             fullWidth
                             variant="outlined"
-                            value={employee.usuario || ''}
-                            onChange={handleChange}
-                        />
-                        <TextField
-                            type="file"
-                            onChange={handleFileChange}
-                            name="foto"
-                            fullWidth
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            variant="outlined"
-                            margin="normal"
+                            onChange={handleChangeEdit}
                         />
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleClose}>Cancelar</Button>
-                        <Button onClick={handleSubmit}>Añadir</Button>
+                        <Button onClick={handleSave}>Guardar</Button>
                     </DialogActions>
                 </Dialog>
                 <Snackbar
                     open={openSnackbar}
                     autoHideDuration={6000}
-                    onClose={handleCloseSnackbar}
+                    onClose={handleCloseSnackbarEdit}
                     anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 >
                     <MuiAlert
-                        onClose={handleCloseSnackbar}
+                        onClose={handleCloseSnackbarEdit}
                         severity="success"
                         sx={{ width: "100%" }}
                     >
-                        Empleado añadido correctamente!
+                        Empleado modificado correctamente!
                     </MuiAlert>
                 </Snackbar>
     </div>

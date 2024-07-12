@@ -155,24 +155,43 @@ app.delete('/empleadodelete/:id', (req, res) => {
 
 //Bloque para obtener todos los beneficiarios
 app.get('/beneficiarios', (req, res) => {
-  const query = 'SELECT * FROM beneficiarios';
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error('Error al obtener beneficiarios:', err);
-      res.status(500).send('Error al obtener beneficiarios');
-      return;
-    }
-    res.json(results);
-  });
+    const query = `
+        SELECT beneficiarios.*, empleados.nombre AS empleado_nombre
+        FROM beneficiarios
+        JOIN empleados ON beneficiarios.empleado_id = empleados.id;
+    `;
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error al obtener beneficiarios:', err);
+            res.status(500).send('Error al obtener beneficiarios');
+            return;
+        }
+        res.json(results);
+    });
 });
-
+//Bloque para obtener beneficiarios de empleado
+app.get('/beneficiarios/:id', (req, res) => {
+    console.log('datos:',req.params);
+    const { id } = req.params;
+    const query = 'SELECT * FROM beneficiarios WHERE empleado_id = ?';
+    db.query(query, [id], (err, results) => {
+      if (err) {
+        console.error('Error al obtener beneficiarios:', err);
+        res.status(500).send('Error al obtener beneficiarios');
+        return;
+      }
+      res.json(results);
+    });
+  });
 //Bloque para agregar un beneficiario
 app.post('/beneficiarios', (req, res) => {
-  const { nombre, apellido_paterno, apellido_materno, parentesco, empleado_id } = req.body;
+    console.log('esto llega de beneficiarios:',req.body);
+  const { nombre, apellido_paterno, apellido_materno, parentesco, empleado_uuid } = req.body;
+  console.log('este es el id del empleado:',empleado_uuid)
   const id = uuidv4(); // Generar un UID para el beneficiario
 
   const query = 'INSERT INTO beneficiarios (id, nombre, apellido_paterno, apellido_materno, parentesco, empleado_id) VALUES (?, ?, ?, ?, ?, ?)';
-  db.query(query, [id, nombre, apellido_paterno, apellido_materno, parentesco, empleado_id], (err, results) => {
+  db.query(query, [id, nombre, apellido_paterno, apellido_materno, parentesco, empleado_uuid], (err, results) => {
     if (err) {
       console.error('Error al agregar beneficiario:', err);
       res.status(500).send('Error al agregar beneficiario');
@@ -200,6 +219,7 @@ app.put('/beneficiarios/:id', (req, res) => {
 
 //Bloque para eliminar un beneficiario
 app.delete('/beneficiarios/:id', (req, res) => {
+  console.log('recibo eliminar:',req.params);
   const { id } = req.params;
   const query = 'DELETE FROM beneficiarios WHERE id = ?';
   db.query(query, [id], (err, results) => {

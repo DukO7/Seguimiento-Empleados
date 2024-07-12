@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { DataGrid, GridActionsCellItem, GridToolbar, GridToolbarQuickFilter } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import { esES } from "@mui/x-data-grid/locales";
 import axios from "axios";
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar, DialogContentText,Card, CardContent, Typography, CardActions} from "@mui/material";
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar, DialogContentText, Card, CardContent, Typography, CardActions } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import EditIcon from '@mui/icons-material/Edit';
@@ -11,6 +11,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import Tooltip from '@mui/material/Tooltip';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 import Box from '@mui/material/Box';
+import AgregarEmpleado from './AgregarEmpleado';
+import AgregarBeneficiario from './AgregarBeneficiario';
 const EmployeeTable = () => {
     useEffect(() => {
         fetchEmployees();
@@ -48,33 +50,8 @@ const EmployeeTable = () => {
         setVerData(row);
         setOpenOpcion(true);
     };
-
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setEmployee({
-                    ...employee,
-                    foto: reader.result.split(",")[1], // Guarda solo la parte base64, sin el prefijo de datos
-                });
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-    // Campos de almacenamiento para insertar nuevo empleado
-    const [employee, setEmployee] = useState({
-        nombre: "",
-        apellido_paterno: "",
-        apellido_materno: "",
-        fecha_ingreso: "",
-        fecha_nacimiento: "",
-        puesto: "",
-        salario: "",
-        usuario: "",
-        contraseña: "",
-        foto: "",
-    });
+    const [isAddDialogOpen, setAddDialogOpen] = useState(false);
+    const [isAddDialogOpenB, setAddDialogOpenB] = useState(false);
     // Campos de almacenamiento para editar empleado
     const [editData, setEditData] = useState({
         id: '',
@@ -95,6 +72,36 @@ const EmployeeTable = () => {
         contraseña: "",
 
     });
+    const handleSubmit = async (employeeData) => {
+        try {
+            await axios.post("http://localhost:5000/empleado", employeeData);
+            await fetchEmployees();
+            setOpenSnackbar(true);
+            handleCloseAddDialog();
+        } catch (error) {
+            console.error("Error al agregar empleado:", error);
+        }
+    };
+
+    const handleSubmitBene = async (employeeData) => {
+        try {
+            // Combina los datos del beneficiario con el uuid del empleado proveniente de verData
+            const dataToSend = {
+                ...employeeData,
+                empleado_uuid: verData.uuid // Asume que verData tiene una propiedad uuid
+            };
+    
+            const response = await axios.post("http://localhost:5000/beneficiarios", dataToSend);
+            console.log("Beneficiario agregado correctamente:", response.data);
+            
+            // Suponiendo que quieras refrescar algunos datos después de la operación
+            await fetchEmployees(); // Asumiendo que esta función refresca los datos necesarios
+            setOpenSnackbar(true); // Abre el snackbar para indicar éxito
+            handleCloseBeneficiario(); // Cierra el diálogo
+        } catch (error) {
+            console.error("Error al agregar beneficiario:", error);
+        }
+    };
 
     const handleSave = async () => {
         console.log('datos a enviar', editData);
@@ -136,29 +143,7 @@ const EmployeeTable = () => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [openSnackbarEdit, setOpenSnackbarEdit] = useState(false);
     const [openSnackbarEliminar, setOpenSnackbarEliminar] = useState(false);
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setEmployee(prevEmployee => {
-            const updatedEmployee = {
-                ...prevEmployee,
-                [name]: value,
-            };
 
-            if (name === 'nombre' || name === 'apellido_paterno' || name === 'fecha_nacimiento') {
-                if (updatedEmployee.nombre && updatedEmployee.apellido_paterno && updatedEmployee.fecha_nacimiento) {
-                    // Asegurarse de que ambos campos tengan al menos dos caracteres
-                    const nombreInicial = updatedEmployee.nombre.length > 1 ? updatedEmployee.nombre.substring(0, 2) : updatedEmployee.nombre;
-                    const apellidoInicial = updatedEmployee.apellido_paterno.length > 1 ? updatedEmployee.apellido_paterno.substring(0, 2) : updatedEmployee.apellido_paterno;
-
-                    const date = new Date(updatedEmployee.fecha_nacimiento);
-                    const dayMonth = `${date.getDate()}${date.getMonth() + 1}`;  // +1 porque getMonth() devuelve 0-11
-                    updatedEmployee.usuario = `${nombreInicial}${apellidoInicial}${dayMonth}`.toLowerCase();
-                }
-            }
-
-            return updatedEmployee;
-        });
-    };
     const handleChangeEdit = (event) => {
         const { name, value } = event.target;
         setEditData(prevData => ({
@@ -166,23 +151,7 @@ const EmployeeTable = () => {
             [name]: value
         }));
     };
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await axios.post("http://localhost:5000/empleado", employee);
-            await fetchEmployees();
-            setOpenSnackbar(true);
-            handleClose();
-        } catch (error) {
-            console.error("Error al agregar empleado:", error);
-        }
-    };
-    const handleCloseSnackbar = (event, reason) => {
-        if (reason === "clickaway") {
-            return;
-        }
-        setOpenSnackbar(false);
-    };
+
     const handleCloseSnackbarEdit = (event, reason) => {
         if (reason === "clickaway") {
             return;
@@ -243,9 +212,26 @@ const EmployeeTable = () => {
             },
         },
     });
+    const [beneficiarios, setBeneficiarios] = useState([]);
+    const [openVerBeneficiarios, setOpenVerBeneficiarios] = useState(false);
     //Control de Ver modal Beneficiarios
     const handleOpenVerBeneficiarios = () => {
-        console.log("Abrir modal para ver beneficiarios");
+        console.log('datos para beneficiarios:', verData);
+        fetchBeneficiarios(verData);  // Asumiendo que tienes una función para cargar los datos
+        setOpenVerBeneficiarios(true);
+    };
+    const fetchBeneficiarios = async (verData) => {
+        console.log('datos pasados a fetch:', verData);
+        try {
+            const response = await axios.get("http://localhost:5000/beneficiarios/" + verData.uuid);
+            setBeneficiarios(response.data);
+        } catch (error) {
+            console.error("Error al obtener beneficiarios:", error);
+        }
+    };
+
+    const handleCloseVerBeneficiarios = () => {
+        setOpenVerBeneficiarios(false);
     };
     //Control de Agregar modal Beneficiarios
     const handleOpenAgregarBeneficiarios = () => {
@@ -345,7 +331,18 @@ const EmployeeTable = () => {
             fetchEmployees(); // Recargar los datos originales
         }
     };
-
+    const handleOpenAddDialog = () => {
+        setAddDialogOpen(true);
+    };
+    const handleCloseAddDialog = () => {
+        setAddDialogOpen(false);
+    };
+    const handleCloseBeneficiario = () => {
+        setAddDialogOpenB(false);
+    };
+    const handleOpenBeneficiario = () => {
+        setAddDialogOpenB(true);
+    };
     return (
         <div>
 
@@ -354,7 +351,7 @@ const EmployeeTable = () => {
                 <Box sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', mt: '-70px', justifyContent: 'space-between', }}>
                     <Button
                         variant="contained"
-                        onClick={handleOpen}
+                        onClick={handleOpenAddDialog}
                         sx={{
                             top: '70px', position: 'relative',
                             backgroundColor: '#db5019', // Color naranja, cambia esto por cualquier color en formato HEX
@@ -416,132 +413,18 @@ const EmployeeTable = () => {
             </div>
             <div>
                 {/* Modal añadir nuevo empleado */}
-                <Dialog open={open} onClose={handleClose}>
-                    <DialogTitle>Añadir Nuevo Empleado</DialogTitle>
-                    <DialogContent>
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            name="nombre"
-                            label="Nombre"
-                            type="text"
-                            fullWidth
-                            variant="outlined"
-                            onChange={handleChange}
-                        />
-                        <TextField
-                            margin="dense"
-                            name="apellido_paterno"
-                            label="Apellido Paterno"
-                            type="text"
-                            fullWidth
-                            variant="outlined"
-                            onChange={handleChange}
-                        />
-                        <TextField
-                            margin="dense"
-                            name="apellido_materno"
-                            label="Apellido Materno"
-                            type="text"
-                            fullWidth
-                            variant="outlined"
-                            onChange={handleChange}
-                        />
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                            <TextField
-                                margin="dense"
-                                name="fecha_ingreso"
-                                label="Fecha de Ingreso"
-                                type="date"
-                                variant="outlined"
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                onChange={handleChange}
-                                sx={{ width: '48%' }}
-                            />
-                            <TextField
-                                margin="dense"
-                                name="fecha_nacimiento"
-                                label="Fecha de Nacimiento"
-                                type="date"
-                                variant="outlined"
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                onChange={handleChange}
-                                sx={{ width: '48%' }}
-                            />
-                        </Box>
-                        <TextField
-                            margin="dense"
-                            name="puesto"
-                            label="Puesto"
-                            type="text"
-                            fullWidth
-                            variant="outlined"
-                            onChange={handleChange}
-                        />
-                        <TextField
-                            margin="dense"
-                            name="salario"
-                            label="Salario"
-                            type="number"
-                            fullWidth
-                            variant="outlined"
-                            onChange={handleChange}
-                        />
-                        <TextField
-                            margin="dense"
-                            name="usuario"
-                            label="Usuario"
-                            type="text"
-                            fullWidth
-                            variant="outlined"
-                            value={employee.usuario || ''}
-                            onChange={handleChange}
-                        />
-                        <TextField
-                            margin="dense"
-                            name="contraseña"
-                            label="Contraseña"
-                            type="text"
-                            fullWidth
-                            variant="outlined"
-                            value={employee.usuario || ''}
-                            onChange={handleChange}
-                        />
-                        <TextField
-                            type="file"
-                            onChange={handleFileChange}
-                            name="foto"
-                            fullWidth
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            variant="outlined"
-                            margin="normal"
-                        />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClose}>Cancelar</Button>
-                        <Button onClick={handleSubmit}>Añadir</Button>
-                    </DialogActions>
-                </Dialog>
-                <Snackbar
-                    open={openSnackbar}
-                    autoHideDuration={6000}
-                    onClose={handleCloseSnackbar}
-                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                >
-                    <MuiAlert
-                        onClose={handleCloseSnackbar}
-                        severity="success"
-                        sx={{ width: "100%" }}
-                    >
-                        Empleado añadido correctamente!
-                    </MuiAlert>
-                </Snackbar>
+                <AgregarEmpleado
+                    open={isAddDialogOpen}
+                    onClose={handleCloseAddDialog}
+                    onSubmit={handleSubmit}
+                />
+            </div>
+            <div>
+            <AgregarBeneficiario
+                    open={isAddDialogOpenB}
+                    onClose={handleCloseBeneficiario}
+                    onSubmit={handleSubmitBene}
+                /> 
             </div>
             <div>
                 <Dialog open={openedit} onClose={handleCloseEdit}>
@@ -577,33 +460,33 @@ const EmployeeTable = () => {
                             value={editData.apellido_materno}
                             onChange={handleChangeEdit}
                         />
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-    <TextField
-        margin="dense"
-        name="fecha_ingreso"
-        label="Fecha de Ingreso"
-        type="date"
-        variant="outlined"
-        InputLabelProps={{
-            shrink: true,
-        }}
-        value={editData.fecha_ingreso}
-        onChange={handleChangeEdit}
-        sx={{ width: '48%' }} // Establece un ancho que permita que ambos TextField quepan en una sola línea
-    />
-    <TextField
-        margin="dense"
-        name="fecha_nacimiento"
-        label="Fecha de Nacimiento"
-        type="date"
-        variant="outlined"
-        InputLabelProps={{
-            shrink: true,
-        }}
-        onChange={handleChangeEdit}
-        sx={{ width: '48%' }} // Establece un ancho que permita que ambos TextField quepan en una sola línea
-    />
-</Box>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                            <TextField
+                                margin="dense"
+                                name="fecha_ingreso"
+                                label="Fecha de Ingreso"
+                                type="date"
+                                variant="outlined"
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                value={editData.fecha_ingreso}
+                                onChange={handleChangeEdit}
+                                sx={{ width: '48%' }} // Establece un ancho que permita que ambos TextField quepan en una sola línea
+                            />
+                            <TextField
+                                margin="dense"
+                                name="fecha_nacimiento"
+                                label="Fecha de Nacimiento"
+                                type="date"
+                                variant="outlined"
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                onChange={handleChangeEdit}
+                                sx={{ width: '48%' }} // Establece un ancho que permita que ambos TextField quepan en una sola línea
+                            />
+                        </Box>
                         <TextField
                             margin="dense"
                             name="puesto"
@@ -676,6 +559,12 @@ const EmployeeTable = () => {
                     <DialogContentText id="alert-dialog-description">
                         ¿Estás seguro de que deseas eliminar este usuario?
                     </DialogContentText>
+                    <DialogContentText id="alert-dialog-description">
+                        *Esta accion es irreversible
+                    </DialogContentText>
+                    <DialogContentText id="alert-dialog-description">
+                        *Se eliminaran los beneficiarios
+                    </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setOpenDeleteDialog(false)} color="primary">
@@ -732,59 +621,85 @@ const EmployeeTable = () => {
             </Dialog>
             {/* Modal prueba */}
             <Dialog open={openopcion} onClose={handleCloseOpcion}>
-    <DialogTitle>Selecciona una acción</DialogTitle>
-    <DialogContent>
-        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'space-between' }}>
-            <Card sx={{ 
-                padding: 2, 
-                width: '48%', 
-                transition: 'transform 0.3s', // Transición suave para el transform
-                '&:hover': {
-                    transform: 'scale(1.05)' // Agrandamiento sutil al pasar el ratón
-                }
-            }}>
-                <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                        Ver Beneficiarios
-                    </Typography>
-                    <Typography variant="body2">
-                        Consulta la lista de beneficiarios registrados de este empleado.
-                    </Typography>
-                </CardContent>
-                <CardActions>
-                    <Button size="small" onClick={handleOpenVerBeneficiarios}>
-                        Abrir
-                    </Button>
-                </CardActions>
-            </Card>
-            <Card sx={{ 
-                padding: 2, 
-                width: '48%', 
-                transition: 'transform 0.3s', // Transición suave para el transform
-                '&:hover': {
-                    transform: 'scale(1.05)' // Agrandamiento sutil al pasar el ratón
-                }
-            }}>
-                <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                        Agregar Beneficiarios
-                    </Typography>
-                    <Typography variant="body2">
-                        Añade un nuevo beneficiario al sistema.
-                    </Typography>
-                </CardContent>
-                <CardActions>
-                    <Button size="small" onClick={handleOpenAgregarBeneficiarios}>
-                        Abrir
-                    </Button>
-                </CardActions>
-            </Card>
-        </Box>
-    </DialogContent>
-    <DialogActions>
-        <Button onClick={handleCloseOpcion}>Cerrar</Button>
-    </DialogActions>
-</Dialog>
+                <DialogTitle>Selecciona una acción</DialogTitle>
+                <DialogContent>
+                    <Box sx={{ display: 'flex', gap: 2, justifyContent: 'space-between' }}>
+                        <Card sx={{
+                            padding: 2,
+                            width: '48%',
+                            transition: 'transform 0.3s', // Transición suave para el transform
+                            '&:hover': {
+                                transform: 'scale(1.05)' // Agrandamiento sutil al pasar el ratón
+                            }
+                        }}>
+                            <CardContent>
+                                <Typography variant="h6" gutterBottom>
+                                    Ver Beneficiarios
+                                </Typography>
+                                <Typography variant="body2">
+                                    Consulta la lista de beneficiarios registrados de este empleado.
+                                </Typography>
+                            </CardContent>
+                            <CardActions>
+                                <Button size="small" onClick={handleOpenVerBeneficiarios}>
+                                    Abrir
+                                </Button>
+                            </CardActions>
+                        </Card>
+                        <Card sx={{
+                            padding: 2,
+                            width: '48%',
+                            transition: 'transform 0.3s', // Transición suave para el transform
+                            '&:hover': {
+                                transform: 'scale(1.05)' // Agrandamiento sutil al pasar el ratón
+                            }
+                        }}>
+                            <CardContent>
+                                <Typography variant="h6" gutterBottom>
+                                    Agregar Beneficiarios
+                                </Typography>
+                                <Typography variant="body2">
+                                    Añade un nuevo beneficiario al sistema.
+                                </Typography>
+                            </CardContent>
+                            <CardActions>
+                                <Button size="small" onClick={handleOpenBeneficiario}>
+                                    Abrir
+                                </Button>
+                            </CardActions>
+                        </Card>
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseOpcion}>Cerrar</Button>
+                </DialogActions>
+            </Dialog>
+            {/* Modal de beneficiarios empleado */}
+            <Dialog open={openVerBeneficiarios} onClose={handleCloseVerBeneficiarios} fullWidth maxWidth="md">
+                <DialogTitle>Beneficiarios de: {verData.nombre + ' ' + verData.apellido_paterno + ' ' + verData.apellido_materno}</DialogTitle>
+                <DialogContent>
+                    <ThemeProvider theme={theme}>
+                        <DataGrid
+                            rows={beneficiarios}
+                            columns={[
+
+                                { field: 'nombre', headerName: 'Nombre', width: 150 },
+                                { field: 'apellido_paterno', headerName: 'Apellido Paterno', width: 150 },
+                                { field: 'apellido_materno', headerName: 'Apellido Materno', width: 150 },
+                                { field: 'parentesco', headerName: 'Relación', width: 150 },
+                                // Agrega más columnas según necesites
+                            ]}
+                            pageSize={5}
+                            rowsPerPageOptions={[5, 10, 20]}
+                            style={{ height: 300 }} 
+                            localeText={esES.components.MuiDataGrid.defaultProps.localeText}
+                        />
+                    </ThemeProvider>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseVerBeneficiarios}>Cerrar</Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 };
