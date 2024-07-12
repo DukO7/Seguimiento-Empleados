@@ -55,7 +55,7 @@ const Login = () => {
         setShowAlert(true);
         setTimeout(() => {
           setShowAlert(false);
-          console.log("prueba:", response.data);
+          console.log("prueba:", user);
           setUser({ user });
           //   setUser({ user }); // Guarda los datos del usuario en el contexto
           navigate("/inicio");
@@ -104,9 +104,9 @@ const Login = () => {
             Iniciar Sesión
           </button>
           <br></br>
-          <button className="login-registro" onClick={handleRegistro}>
+          {/* <button className="login-registro" onClick={handleRegistro}>
             Registrarse
-          </button>
+          </button> */}
         </form>
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>Incorrecto</DialogTitle>

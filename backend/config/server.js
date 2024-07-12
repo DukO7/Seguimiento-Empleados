@@ -7,7 +7,6 @@ const { v4: uuidv4 } = require('uuid');
 const app = express();
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ limit: '20mb', extended: true }));
-
 app.use(express.json());
 
 //Configuración de CORS se agrega validacion de credenciales, constante para modificacion de origen y headers
@@ -230,6 +229,20 @@ app.delete('/beneficiarios/:id', (req, res) => {
     }
     res.send('Beneficiario eliminado');
   });
+});
+//Bloque para actualizar foto
+app.put('/empleado/foto/:id', (req, res) => {
+    const { id } = req.params;
+    const { foto } = req.body;
+    const query = 'UPDATE empleados SET fotografia = ? WHERE id = ?';
+    db.query(query, [foto, id], (err, results) => {
+        if (err) {
+            console.error('Error al actualizar la foto del empleado:', err);
+            res.status(500).send('Error al actualizar la foto del empleado');
+            return;
+        }
+        res.send('Foto del empleado actualizada');
+    });
 });
 
 const PORT = process.env.PORT || 5000;

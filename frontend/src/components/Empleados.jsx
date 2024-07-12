@@ -17,7 +17,7 @@ import { UserContext } from './Context/UserContext';
 import { useNavigate } from "react-router-dom";
 const EmployeeTable = () => {
     const { user } = useContext(UserContext);
-    console.log('trae datos1:',user);
+    console.log('datos que llegan:',user.user.es_admin);
     const navigate = useNavigate();
     useEffect(() => {
         
@@ -27,8 +27,6 @@ const EmployeeTable = () => {
             fetchEmployees();
         }
     }, [user,navigate]);
-    
-    
     const [open, setOpen] = useState(false);
     const [openedit, setOpenEdit] = useState(false);
     const [openever, setOpenVer] = useState(false);
@@ -284,7 +282,7 @@ const EmployeeTable = () => {
     ];
     
     // Condicionales para añadir o no columnas de administrador y usuario
-    if (user && user.user.user.es_admin) {
+    if (user && user?.user.es_admin) {
         columns.push(
             {
                 field: 'sensible',
@@ -376,7 +374,7 @@ const EmployeeTable = () => {
             <div className="main-visual" style={{ padding: "20px", overflowY: "auto", maxHeight: "calc(100vh - 64px)", }}>
 
                 <Box sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', mt: '-70px', justifyContent: 'space-between', }}>
-                    {user?.user.user.es_admin && (
+                    {user?.user.es_admin && (
                         <Button
                             variant="contained"
                             onClick={handleOpenAddDialog}

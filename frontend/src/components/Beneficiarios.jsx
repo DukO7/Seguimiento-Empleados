@@ -13,10 +13,10 @@ import { UserContext } from './Context/UserContext';
 import { useNavigate } from "react-router-dom";
 const Beneficiarios = () => {
     const { user } = useContext(UserContext);
-    console.log('trae datos:',user);
+    console.log('User1:', user);
     const navigate = useNavigate();
     useEffect(() => {
-        
+        console.log('User:', user);
         if (!user) {
             navigate("/");
         } else {
@@ -126,7 +126,7 @@ const Beneficiarios = () => {
             id: index,// Asegura un identificador único para cada fila
             uuid: bene.id 
         }));
-        console.log('Beneficiarios con nombre de empleado:', beneficiarios);
+        // console.log('Beneficiarios con nombre de empleado:', beneficiarios);
         setEmployees(beneficiarios);
         setRows(beneficiarios);
     } catch (error) {
@@ -161,7 +161,7 @@ const Beneficiarios = () => {
         { field: "apellido_materno", headerName: "Apellido Materno Beneficiario", width: 210 },
         { field: "parentesco", headerName: "Parentesco", width: 110 },
     ]
-    if (user && user.user.user.es_admin) {
+    if (user && user?.user.user.es_admin) {
         columns.push({
             field: 'actions',
             type: 'actions',
