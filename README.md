@@ -61,9 +61,9 @@ Esto debería abrir automáticamente una ventana en tu navegador predeterminado 
 
 Las credenciales de administrador predeterminadas para acceder al sistema son:
 
-Usuario: **adad137**
-Contraseña: **adad137**
-Frontend
+-Usuario: **adad137**
+-Contraseña: **adad137**
+
 
 ## Uso
 Una vez instalado y ejecutado, la aplicación permitirá gestionar empleados, editar sus datos, y consultar diversas informaciones relacionadas con su desempeño y datos personales.
