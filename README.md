@@ -6,9 +6,9 @@ Este proyecto está diseñado para gestionar y seguir el desempeño de los emple
 
 Antes de instalar y ejecutar el proyecto, asegúrate de tener instalado:
 
-- Node.js
-- npm
-- Un sistema de gestión de bases de datos SQL (Recomendado: MySQL a través de XAMPP para simplificar la configuración de phpMyAdmin)
+- **Node.js**
+- **npm**
+- **Un sistema de gestión de bases de datos SQL (Recomendado: MySQL a través de XAMPP para simplificar la configuración de phpMyAdmin)**
 
 ## Instalación
 
