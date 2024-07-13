@@ -27,8 +27,9 @@ Encuentra el archivo SQL y utilízalo para importar la estructura y los datos in
 Configuración alternativa mediante SQL:
 
 Si prefieres, puedes utilizar los comandos SQL proporcionados en otro archivo dentro de la misma carpeta para configurar tu base de datos manualmente.
-Instalación de dependencias
-Backend
+
+## Instalación de BACKEND
+
 bash
 Copiar código
 cd backend
