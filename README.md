@@ -61,8 +61,8 @@ Esto debería abrir automáticamente una ventana en tu navegador predeterminado 
 
 Las credenciales de administrador predeterminadas para acceder al sistema son:
 
--Usuario: **adad137**
--Contraseña: **adad137**
+- Usuario: **adad137**
+- Contraseña: **adad137**
 
 
 ## Uso
