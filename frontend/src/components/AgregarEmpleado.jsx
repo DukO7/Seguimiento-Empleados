@@ -1,9 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect  } from 'react';
 import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar,Checkbox, FormControlLabel } from "@mui/material";
 import Box from '@mui/material/Box';
 import MuiAlert from "@mui/material/Alert";
 import Avatar from '@mui/material/Avatar';
+import perfil from './img/perfil.jpg';
 function AddEmployeeDialog({ open, onClose, onSubmit }) {
+    const [previewUrl, setPreviewUrl] = useState('');
+    useEffect(() => {
+        fetch(perfil)
+            .then(res => res.blob())
+            .then(blob => {
+                const reader = new FileReader();
+                reader.readAsDataURL(blob);
+                reader.onloadend = () => {
+                    const base64data = reader.result;
+                    setPreviewUrl(base64data);
+                    setEmployee(prev => ({ ...prev, foto: base64data.split(",")[1] }));
+                };
+            });
+    }, []);
+
     const [employee, setEmployee] = useState({
         nombre: "",
         apellido_paterno: "",
@@ -30,14 +46,16 @@ function AddEmployeeDialog({ open, onClose, onSubmit }) {
         foto: "",
         is_admin: false,
     };
+    
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [isFormValid, setIsFormValid] = useState(false);
     const handleClose = () => {
         onClose();
+        resetForm();
     };
     function resetForm() {
         setEmployee(initialState);
-        setPreviewUrl('');
+        setPreviewUrl(perfil);
         setIsFormValid(false); // Asegúrate de tener esta lógica implementada si es necesario
     }
     const handleCheckboxChange = (e) => {
@@ -112,7 +130,7 @@ function AddEmployeeDialog({ open, onClose, onSubmit }) {
         }
     };
     const [image, setImage] = useState(null);
-    const [previewUrl, setPreviewUrl] = useState('');
+    
 
     return (
         <div>
