@@ -21,7 +21,7 @@ Para obtener el proyecto, clona el repositorio usando git:
 - `cd Seguimiento-Empleados`
 
 Configuración de la base de datos
-Antes de iniciar el servidor, debes configurar la base de datos:
+Antes de iniciar el servidor, debes configurar la base de datos.
 
 ## Importar la base de datos:
 
