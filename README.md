@@ -20,9 +20,6 @@ Para obtener el proyecto, clona el repositorio usando git:
 - `git clone https://github.com/DukO7/Seguimiento-Empleados.git`
 - `cd Seguimiento-Empleados`
 
-Configuración de la base de datos
-Antes de iniciar el servidor, debes configurar la base de datos.
-
 ## Importar la base de datos:
 
 Navega a la carpeta bd dentro del repositorio clonado.
