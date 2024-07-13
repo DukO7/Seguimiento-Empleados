@@ -32,16 +32,18 @@ Si prefieres, puedes utilizar los comandos SQL proporcionados en otro archivo de
 
 ## Instalación de BACKEND
 
-bash
-Copiar código
-cd backend
-npm install
-Levantar el servidor
+Se procede a la instalacion y levantamiento del backend:
+
+- `bash`
+- `cd backend`
+- `npm install`
+  
 Para iniciar el servidor, ejecuta:
 
-bash
-### node server.js
-Deberías ver los mensajes "Servidor corriendo en el puerto 5000" y "Conectado a MySQL" indicando que todo está funcionando correctamente.
+- `node server.js`
+
+
+##### Deberías ver los mensajes "Servidor corriendo en el puerto 5000" y "Conectado a MySQL" indicando que todo está funcionando correctamente.
 
 Credenciales predeterminadas
 Las credenciales de administrador predeterminadas para acceder al sistema son:
