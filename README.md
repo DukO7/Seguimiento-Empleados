@@ -26,7 +26,7 @@ Navega a la carpeta `bd` dentro del repositorio clonado.
 
 Encuentra el archivo SQL y utilízalo para importar la estructura y los datos iniciales a través de phpMyAdmin o cualquier interfaz de gestión de MySQL.
 
-### Configuración alternativa mediante SQL:
+#### Configuración alternativa mediante SQL:
 
 Si prefieres, puedes utilizar los comandos SQL proporcionados en otro archivo dentro de la misma carpeta para configurar tu base de datos manualmente.
 
