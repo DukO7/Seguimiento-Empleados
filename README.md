@@ -30,7 +30,7 @@ Encuentra el archivo SQL y utilízalo para importar la estructura y los datos in
 
 Si prefieres, puedes utilizar los comandos SQL proporcionados en otro archivo dentro de la misma carpeta para configurar tu base de datos manualmente.
 
-## Instalación de BACKEND
+## Instalación de Backend
 
 Se procede a la instalacion y levantamiento del backend:
 
@@ -45,20 +45,23 @@ Para iniciar el servidor, ejecuta:
 
 ##### Deberías ver los mensajes "Servidor corriendo en el puerto 5000" y "Conectado a MySQL" indicando que todo está funcionando correctamente.
 
+## Instalación de Frontend
+
+Para instalar y ejecutar el frontend del proyecto:
+
+- `bash`
+- `cd frontend`
+- `npm install`
+- `npm start`
+
+Esto debería abrir automáticamente una ventana en tu navegador predeterminado con la aplicación funcionando.
+
+
 Credenciales predeterminadas
 Las credenciales de administrador predeterminadas para acceder al sistema son:
 
 Usuario: adad137
 Contraseña: adad137
 Frontend
-Para instalar y ejecutar el frontend del proyecto:
-
-bash
-Copiar código
-cd frontend
-npm install
-npm start
-Esto debería abrir automáticamente una ventana en tu navegador predeterminado con la aplicación funcionando.
-
 ## Uso
 Una vez instalado y ejecutado, la aplicación permitirá gestionar empleados, editar sus datos, y consultar diversas informaciones relacionadas con su desempeño y datos personales.
