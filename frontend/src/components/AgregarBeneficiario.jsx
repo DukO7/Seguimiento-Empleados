@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar} from "@mui/material";
+import React, { useState, useMemo } from 'react';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
+
 function AddBeneficiaryDialog({ open, onClose, onSubmit }) {
     const [beneficiary, setBeneficiary] = useState({
         nombre: "",
@@ -11,19 +12,24 @@ function AddBeneficiaryDialog({ open, onClose, onSubmit }) {
     const [openSnackbar, setOpenSnackbar] = useState(false);
 
     const handleClose = () => {
-        onClose();
+        onClose(); // Cierra el diálogo
     };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setBeneficiary(prev => ({ ...prev, [name]: value }));
+        setBeneficiary(prev => ({ ...prev, [name]: value.trim() })); // Utiliza trim para eliminar espacios al principio y al final
     };
+
+    const isFormValid = useMemo(() => {
+        return beneficiary.nombre && beneficiary.apellido_paterno && beneficiary.apellido_materno && beneficiary.parentesco;
+    }, [beneficiary]); // Recalcula si alguno de los valores del beneficiario cambia
 
     const handleSubmit = async () => {
         try {
             await onSubmit(beneficiary);
-            setOpenSnackbar(true);
-            onClose();
+            setOpenSnackbar(true); // Muestra el snackbar de éxito
+            onClose(); // Cierra el diálogo
+            
         } catch (error) {
             console.error("Error al agregar beneficiario:", error);
         }
@@ -33,7 +39,7 @@ function AddBeneficiaryDialog({ open, onClose, onSubmit }) {
         if (reason === "clickaway") {
             return;
         }
-        setOpenSnackbar(false);
+        setOpenSnackbar(false); // Cierra el snackbar
     };
 
     return (
@@ -81,7 +87,7 @@ function AddBeneficiaryDialog({ open, onClose, onSubmit }) {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancelar</Button>
-                    <Button onClick={handleSubmit}>Añadir</Button>
+                    <Button onClick={handleSubmit} disabled={!isFormValid}>Añadir</Button>
                 </DialogActions>
             </Dialog>
             <Snackbar

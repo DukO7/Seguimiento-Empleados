@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar, DialogContentText, Card, CardContent, Typography, CardActions } from "@mui/material";
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar,Checkbox, FormControlLabel } from "@mui/material";
 import Box from '@mui/material/Box';
 import MuiAlert from "@mui/material/Alert";
 import Avatar from '@mui/material/Avatar';
@@ -15,10 +15,36 @@ function AddEmployeeDialog({ open, onClose, onSubmit }) {
         usuario: "",
         contraseña: "",
         foto: "",
+        is_admin: false,
     });
+    const initialState = {
+        nombre: "",
+        apellido_paterno: "",
+        apellido_materno: "",
+        fecha_ingreso: "",
+        fecha_nacimiento: "",
+        puesto: "",
+        salario: "",
+        usuario: "",
+        contraseña: "",
+        foto: "",
+        is_admin: false,
+    };
     const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [isFormValid, setIsFormValid] = useState(false);
     const handleClose = () => {
         onClose();
+    };
+    function resetForm() {
+        setEmployee(initialState);
+        setPreviewUrl('');
+        setIsFormValid(false); // Asegúrate de tener esta lógica implementada si es necesario
+    }
+    const handleCheckboxChange = (e) => {
+        setEmployee(prevEmployee => ({
+            ...prevEmployee,
+            is_admin: e.target.checked
+        }));
     };
     const [opene, setOpen] = useState(false);
     const handleChange = (e) => {
@@ -43,20 +69,29 @@ function AddEmployeeDialog({ open, onClose, onSubmit }) {
                 }
             }
     
+            // Verificar si todos los campos requeridos están completos
+            validateForm(updatedEmployee);
+            
             return updatedEmployee;
         });
     };
     const handleOpenSnackbar = () => {
         setOpenSnackbar(true);
     };
-
+    const validateForm = (data) => {
+        const isValid = data.nombre && data.apellido_paterno && data.apellido_materno && data.puesto && data.salario;
+        setIsFormValid(isValid);
+    };
     const handleSubmit = async () => {
-        try {
-            await onSubmit(employee);
-            handleOpenSnackbar();
-            onClose();
-        } catch (error) {
-            console.error("Error al agregar empleado:", error);
+        if (isFormValid) {
+            try {
+                await onSubmit(employee);
+                handleOpenSnackbar();
+                onClose();
+                resetForm();
+            } catch (error) {
+                console.error("Error al agregar empleado:", error);
+            }
         }
     };
     const handleCloseSnackbar = (event, reason) => {
@@ -207,11 +242,21 @@ function AddEmployeeDialog({ open, onClose, onSubmit }) {
                         value={employee.contraseña || ''}
                         onChange={handleChange}
                     />
-
+ <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={employee.is_admin}
+                                onChange={handleCheckboxChange}
+                                name="is_admin"
+                                color="primary"
+                            />
+                        }
+                        label="Es administrador"
+                    />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancelar</Button>
-                    <Button onClick={handleSubmit}>Añadir</Button>
+                    <Button onClick={handleSubmit} disabled={!isFormValid}>Añadir</Button>
                 </DialogActions>
             </Dialog>
             <Snackbar

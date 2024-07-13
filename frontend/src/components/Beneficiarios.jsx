@@ -66,13 +66,8 @@ const Beneficiarios = () => {
         nombre: "",
         apellido_paterno: "",
         apellido_materno: "",
-        fecha_ingreso: "",
-        fecha_nacimiento: "",
-        puesto: "",
-        salario: "",
-        usuario: "",
-        contraseña: "",
-        foto: "",
+        parentesco:"",
+        empleado_id:"",
     });
 
     const [verData, setVerData] = useState({
@@ -80,7 +75,7 @@ const Beneficiarios = () => {
         contraseña: "",
 
     });
-
+    
     ///////////
     const handleDeleteServ = async () => {
         console.log('se ejecuta');
@@ -133,6 +128,13 @@ const Beneficiarios = () => {
         console.error("Error fetching beneficiarios:", error);
     }
 };
+const handleChangeEdit = (event) => {
+    const { name, value } = event.target;
+    setEditData(prevData => ({
+        ...prevData,
+        [name]: value
+    }));
+};
     //Adaptacion de background y color de columnas
     const theme = createTheme({
         components: {
@@ -161,7 +163,7 @@ const Beneficiarios = () => {
         { field: "apellido_materno", headerName: "Apellido Materno Beneficiario", width: 210 },
         { field: "parentesco", headerName: "Parentesco", width: 110 },
     ]
-    if (user && user?.user.user.es_admin) {
+    if (user && user?.user.es_admin) {
         columns.push({
             field: 'actions',
             type: 'actions',
@@ -180,7 +182,12 @@ const Beneficiarios = () => {
 
     const [filterText, setFilterText] = useState('');
     const [rows, setRows] = useState([]);
-
+    const handleCloseSnackbarEdit = (event, reason) => {
+        if (reason === "clickaway") {
+            return;
+        }
+        setOpenSnackbarEdit(false);
+    };
     const handleFilterChange = (event) => {
         const value = event.target.value;
         setFilterText(value);
@@ -199,6 +206,25 @@ const Beneficiarios = () => {
     };
     const handleOpenAddDialog = () => {
         setAddDialogOpen(true);
+    };
+    const [openSnackbarEdit, setOpenSnackbarEdit] = useState(false);
+    const handleSave = async () => {
+        console.log('datos a enviar', editData);
+
+        const apiUrl = 'http://localhost:5000/beneficiarios/' + editData.uuid;
+        try {
+            const response = await axios.put(apiUrl, editData);
+            if (response.status === 200) {
+                console.log('Datos actualizados con éxito:', response.data);
+                await fetchEmployees();
+                setOpenSnackbarEdit(true);
+                handleCloseEdit();
+
+            }
+        } catch (error) {
+            console.error('Error al actualizar los datos:', error);
+            // Manejar errores, por ejemplo, mostrando un mensaje al usuario
+        }
     };
     return (
         <div>
@@ -276,7 +302,67 @@ const Beneficiarios = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-           
+            <Dialog open={openedit} onClose={handleCloseEdit}>
+                    <DialogTitle>Editar Beneficiario</DialogTitle>
+                    <DialogContent>
+                        <TextField
+                            margin="dense"
+                            name="nombre"
+                            label="Nombre"
+                            type="text"
+                            fullWidth
+                            variant="outlined"
+                            value={editData.nombre}
+                            onChange={handleChangeEdit}
+                        />
+                        <TextField
+                            margin="dense"
+                            name="apellido_paterno"
+                            label="Apellido Paterno"
+                            type="text"
+                            fullWidth
+                            variant="outlined"
+                            value={editData.apellido_paterno}
+                            onChange={handleChangeEdit}
+                        />
+                        <TextField
+                            margin="dense"
+                            name="apellido_materno"
+                            label="Apellido Materno"
+                            type="text"
+                            fullWidth
+                            variant="outlined"
+                            value={editData.apellido_materno}
+                            onChange={handleChangeEdit}
+                        />
+                       
+                        <TextField
+                            margin="dense"
+                            name="parentesco"
+                            label="Parentesco"
+                            type="text"
+                            fullWidth
+                            variant="outlined"
+                            value={editData.parentesco}
+                            onChange={handleChangeEdit}
+                        />
+                        <TextField
+                            margin="dense"
+                            name="empleado_id"
+                            label="Identificacion Empleado"
+                            type="text"
+                            fullWidth
+                            variant="outlined"
+                            value={editData.empleado_id}
+                            onChange={handleChangeEdit}
+                        />
+                        
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseEdit}>Cancelar</Button>
+                        <Button onClick={handleSave}>Guardar</Button>
+                    </DialogActions>
+                </Dialog>
             </div>
             <Snackbar
                 open={openSnackbarEliminar}
@@ -292,6 +378,20 @@ const Beneficiarios = () => {
                     Empleado Eliminado correctamente!
                 </MuiAlert>
             </Snackbar>
+            <Snackbar
+                    open={openSnackbarEdit}
+                    autoHideDuration={6000}
+                    onClose={handleCloseSnackbarEdit}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                >
+                    <MuiAlert
+                        onClose={handleCloseSnackbarEdit}
+                        severity="success"
+                        sx={{ width: "100%" }}
+                    >
+                        Empleado modificado correctamente!
+                    </MuiAlert>
+                </Snackbar>
         </div>
     );
 };

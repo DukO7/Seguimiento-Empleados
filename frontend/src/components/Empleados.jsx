@@ -17,7 +17,7 @@ import { UserContext } from './Context/UserContext';
 import { useNavigate } from "react-router-dom";
 const EmployeeTable = () => {
     const { user } = useContext(UserContext);
-    console.log('datos que llegan:',user.user.es_admin);
+    // console.log('datos que llegan:',user.user.es_admin);
     const navigate = useNavigate();
     useEffect(() => {
         
@@ -276,7 +276,7 @@ const EmployeeTable = () => {
         {
             field: "salario",
             headerName: "Salario",
-            width: 80,
+            width: 90,
             renderCell: (params) => `$${params.value.toLocaleString('es-MX')}`,
         }
     ];

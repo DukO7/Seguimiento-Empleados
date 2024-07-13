@@ -6,13 +6,11 @@ import { useNavigate } from "react-router-dom";
 import logo from "./img/logo.png";
 import CustomAlert from "./CustomAlert";
 import { UserContext } from './Context/UserContext';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from "@mui/material";
+import { Dialog, DialogTitle, DialogContent, DialogActions,IconButton, InputAdornment} from "@mui/material";
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 const Login = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const navigate = useNavigate();
   const [usuario, setUsuario] = useState("");
@@ -20,17 +18,28 @@ const Login = () => {
   const [error, setError] = useState("");
   const { setUser } = useContext(UserContext);
   const [open, setOpen] = useState(false);
+  const [openl, setOpenL] = useState(false);
+  const [openu, setOpenU] = useState(false);
+  const [openc, setOpenC] = useState(false);
   const [open1, setOpen1] = useState(false);
-  const handleOpen = () => {
-    setOpen(true);
-  };
-  const handleRegistro = () => {
-    navigate("/Registro");
-  };
+  // const handleOpen = () => {
+  //   setOpen(true);
+  // };
+  // const handleRegistro = () => {
+  //   navigate("/Registro");
+  // };
   const handleClose = () => {
     setOpen(false);
   };
-
+  const handleCloseL = () => {
+    setOpenL(false);
+  };
+  const handleCloseU = () => {
+    setOpenU(false);
+  };
+  const handleCloseC = () => {
+    setOpenC(false);
+  };
   const handleOpen1 = () => {
     setOpen1(true);
   };
@@ -40,6 +49,26 @@ const Login = () => {
   };
   const handleLogin = async (event) => {
     event.preventDefault();
+
+    // Reinicia el mensaje de error cada vez que se intenta iniciar sesión
+    setError("");
+
+    if (!usuario.trim() && !contraseña.trim()) {
+      setError("Debe llenar todos los campos.");
+      setOpenL(true);
+      return;
+    }
+    if (!usuario.trim()) {
+      setError("El campo 'Usuario' es obligatorio.");
+      setOpenU(true);
+      return;
+    }
+    if (!contraseña.trim()) {
+      setError("El campo 'Contraseña' es obligatorio.");
+      setOpenC(true);
+      return;
+    }
+
     try {
       const response = await axios.post(
         "http://localhost:5000/login",
@@ -55,22 +84,25 @@ const Login = () => {
         setShowAlert(true);
         setTimeout(() => {
           setShowAlert(false);
-          console.log("prueba:", user);
           setUser({ user });
-          //   setUser({ user }); // Guarda los datos del usuario en el contexto
           navigate("/inicio");
-        }, 2000); // Muestra el alert por 3 segundos antes de navegar
+        }, 2000);
       } else {
         setError("Credenciales incorrectas. Por favor, inténtelo de nuevo.");
         setOpen(true);
       }
     } catch (error) {
-      console.error("Error al iniciar sesión:", error);
-      setOpen1(true);
       setError("Error al iniciar sesión. Por favor, inténtelo de nuevo.");
+      setOpen(true);
     }
   };
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
+  const handleMouseDownPassword = event => {
+    event.preventDefault();
+  };
   return (
     <div>
       <CustomAlert visible={showAlert} message="Iniciando Sesión..." />
@@ -89,14 +121,21 @@ const Login = () => {
             <label>Usuario</label>
           </div>
           <div className="user-box">
-            <input
-              type="password"
-              value={contraseña}
-              onChange={(e) => setContraseña(e.target.value)}
-            />
-            <label>Contraseña</label>
-          </div>
-          <button className="login-button" onClick={handleLogin}>
+          <input
+            type={showPassword ? "text" : "password"}
+            value={contraseña}
+            onChange={(e) => setContraseña(e.target.value)}
+          />
+          <label>Contraseña</label>
+          <IconButton
+            onClick={handleClickShowPassword}
+            onMouseDown={handleMouseDownPassword}
+            style={{ position: 'absolute', right: 0, top: -15, margin: '10px', color: 'white' }}
+          >
+            {showPassword ? <VisibilityOff /> : <Visibility />}
+          </IconButton>
+        </div>
+          <button className="login-button" onClick={handleLogin} >
             <span></span>
             <span></span>
             <span></span>
@@ -111,7 +150,7 @@ const Login = () => {
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>Incorrecto</DialogTitle>
           <DialogContent>
-            Credenciales incorrectas. Por favor, inténtelo de nuevo.
+          {error}
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Aceptar</Button>
@@ -120,10 +159,37 @@ const Login = () => {
         <Dialog open={open1} onClose={handleClose1}>
           <DialogTitle>Error</DialogTitle>
           <DialogContent>
-            Error al iniciar sesión. Por favor, inténtelo de nuevo.
+          {error}
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose1}>Aceptar</Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog open={openl} onClose={handleCloseL}>
+          <DialogTitle>Error</DialogTitle>
+          <DialogContent>
+          {error}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseL}>Aceptar</Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog open={openu} onClose={handleCloseU}>
+          <DialogTitle>Error</DialogTitle>
+          <DialogContent>
+          {error}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseU}>Aceptar</Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog open={openc} onClose={handleCloseC}>
+          <DialogTitle>Error</DialogTitle>
+          <DialogContent>
+          {error}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseC}>Aceptar</Button>
           </DialogActions>
         </Dialog>
       </div>

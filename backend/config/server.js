@@ -66,7 +66,7 @@ app.post('/login', (req, res) => {
     const { usuario, contraseña } = req.body;
 
     // Supongamos que la tabla de empleados tiene campos para usuario, contraseña y es_admin
-    const query = 'SELECT id, usuario, contraseña, es_admin FROM empleados WHERE usuario = ?';
+    const query = 'SELECT id, usuario, contraseña, es_admin,nombre FROM empleados WHERE usuario = ?';
     db.query(query, [usuario], (err, results) => {
         if (err) {
             console.error('Error al buscar empleado:', err);
@@ -80,7 +80,8 @@ app.post('/login', (req, res) => {
                 res.json({
                     usuario: user.usuario,
                     es_admin: user.es_admin,
-                    id: user.id // Puedes enviar también el id si es necesario
+                    id: user.id,
+                    nombre:user.nombre
                 });
             } else {
                 res.status(401).send('Credenciales no válidas');
@@ -105,12 +106,12 @@ app.get('/Obempleados', (req, res) => {
 
 //Bloque para ingresar empleado
 app.post('/empleado', (req, res) => {
-  const { nombre, apellido_paterno, apellido_materno, fecha_ingreso, fecha_nacimiento, puesto, salario, usuario, contraseña,foto } = req.body;
+  const { nombre, apellido_paterno, apellido_materno, fecha_ingreso, fecha_nacimiento, puesto, salario, usuario, contraseña,foto,is_admin } = req.body;
   const id = uuidv4(); // Generar un UID para el empleado
   const hashedPassword = bcrypt.hashSync(contraseña, 10); // Hashear la contraseña
 
-  const query = 'INSERT INTO empleados (id, nombre, apellido_paterno, apellido_materno, fecha_ingreso, fecha_nacimiento, puesto, salario, usuario, contraseña,fotografia) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)';
-  db.query(query, [id, nombre, apellido_paterno, apellido_materno, fecha_ingreso, fecha_nacimiento, puesto, salario, usuario, hashedPassword,foto], (err, results) => {
+  const query = 'INSERT INTO empleados (id, nombre, apellido_paterno, apellido_materno, fecha_ingreso, fecha_nacimiento, puesto, salario, usuario, contraseña,fotografia,es_admin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)';
+  db.query(query, [id, nombre, apellido_paterno, apellido_materno, fecha_ingreso, fecha_nacimiento, puesto, salario, usuario, hashedPassword,foto,is_admin], (err, results) => {
     if (err) {
       console.error('Error al agregar empleado:', err);
       res.status(500).send('Error al agregar empleado');
@@ -203,10 +204,9 @@ app.post('/beneficiarios', (req, res) => {
 //Bloque para actualizar un beneficiario
 app.put('/beneficiarios/:id', (req, res) => {
   const { id } = req.params;
-  const { nombre, apellido_paterno, apellido_materno, parentesco, empleado_id } = req.body;
-
-  const query = 'UPDATE beneficiarios SET nombre = ?, apellido_paterno = ?, apellido_materno = ?, parentesco = ?, empleado_id = ? WHERE id = ?';
-  db.query(query, [nombre, apellido_paterno, apellido_materno, parentesco, empleado_id, id], (err, results) => {
+  const { nombre, apellido_paterno, apellido_materno, parentesco,empleado_id,uuid} = req.body;
+  const query = 'UPDATE beneficiarios SET nombre = ?, apellido_paterno = ?, apellido_materno = ?, parentesco = ? WHERE id = ?';
+  db.query(query, [nombre, apellido_paterno, apellido_materno, parentesco, uuid], (err, results) => {
     if (err) {
       console.error('Error al actualizar beneficiario:', err);
       res.status(500).send('Error al actualizar beneficiario');
