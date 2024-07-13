@@ -23,7 +23,7 @@ cd Seguimiento-Empleados
 Configuración de la base de datos
 Antes de iniciar el servidor, debes configurar la base de datos:
 
-Importar la base de datos:
+## Importar la base de datos:
 
 Navega a la carpeta bd dentro del repositorio clonado.
 Encuentra el archivo SQL y utilízalo para importar la estructura y los datos iniciales a través de phpMyAdmin o cualquier interfaz de gestión de MySQL.
@@ -58,5 +58,5 @@ npm install
 npm start
 Esto debería abrir automáticamente una ventana en tu navegador predeterminado con la aplicación funcionando.
 
-Uso
+## Uso
 Una vez instalado y ejecutado, la aplicación permitirá gestionar empleados, editar sus datos, y consultar diversas informaciones relacionadas con su desempeño y datos personales.
