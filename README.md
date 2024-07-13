@@ -57,7 +57,8 @@ Para instalar y ejecutar el frontend del proyecto:
 Esto debería abrir automáticamente una ventana en tu navegador predeterminado con la aplicación funcionando.
 
 
-Credenciales predeterminadas
+##### Credenciales predeterminadas
+
 Las credenciales de administrador predeterminadas para acceder al sistema son:
 
 Usuario: adad137
