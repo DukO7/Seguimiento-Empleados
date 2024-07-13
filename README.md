@@ -1,7 +1,7 @@
 # Seguimiento de Empleados
 Este proyecto está diseñado para gestionar y seguir el desempeño de los empleados dentro de una organización. Incluye funcionalidades para añadir, editar, y visualizar empleados y sus respectivos datos.
 
-Prerrequisitos
+## Prerrequisitos
 Antes de instalar y ejecutar el proyecto, asegúrate de tener instalado:
 
 Node.js
@@ -35,8 +35,7 @@ Levantar el servidor
 Para iniciar el servidor, ejecuta:
 
 bash
-Copiar código
-node server.js
+### node server.js
 Deberías ver los mensajes "Servidor corriendo en el puerto 5000" y "Conectado a MySQL" indicando que todo está funcionando correctamente.
 
 Credenciales predeterminadas
