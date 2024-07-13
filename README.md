@@ -16,10 +16,10 @@ Antes de instalar y ejecutar el proyecto, asegúrate de tener instalado:
 
 Para obtener el proyecto, clona el repositorio usando git:
 
-```bash
-git clone https://github.com/DukO7/Seguimiento-Empleados.git
+`bash
+git clone https://github.com/DukO7/Seguimiento-Empleados.git`
 cd Seguimiento-Empleados
-cd Seguimiento-Empleados```
+cd Seguimiento-Empleados
 Configuración de la base de datos
 Antes de iniciar el servidor, debes configurar la base de datos:
 
