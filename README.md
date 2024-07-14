@@ -24,11 +24,8 @@ Para obtener el proyecto, clona el repositorio usando git:
 
 Navega a la carpeta `bd` dentro del repositorio clonado.
 
-Encuentra el archivo SQL y utilízalo para importar la estructura y los datos iniciales a través de phpMyAdmin o cualquier interfaz de gestión de MySQL.
+Encuentra el archivo SQL llamado "seguimiento_empleado.sql" y utilízalo para importar la estructura y los datos iniciales a través de phpMyAdmin o cualquier interfaz de gestión de MySQL.
 
-#### Configuración alternativa mediante SQL:
-
-Si prefieres, puedes utilizar los comandos SQL proporcionados en otro archivo dentro de la misma carpeta para configurar tu base de datos manualmente.
 
 ## Instalación de Backend
 
