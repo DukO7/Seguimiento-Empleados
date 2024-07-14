@@ -16,7 +16,7 @@ Antes de instalar y ejecutar el proyecto, asegúrate de tener instalado:
 
 Para obtener el proyecto, clona el repositorio usando git:
 
-- `bash`
+- `terminal`
 - `git clone https://github.com/DukO7/Seguimiento-Empleados.git`
 - `cd Seguimiento-Empleados`
 
@@ -31,8 +31,9 @@ Encuentra el archivo SQL llamado "seguimiento_empleado.sql" y utilízalo para im
 
 Se procede a la instalacion y levantamiento del backend:
 
-- `bash`
+- `terminal`
 - `cd backend`
+- `cd config`
 - `npm install express mysql bcryptjs jsonwebtoken cors uuid`
   
 Para iniciar el servidor, ejecuta:
@@ -46,7 +47,7 @@ Para iniciar el servidor, ejecuta:
 
 Para instalar y ejecutar el frontend del proyecto:
 
-- `bash`
+- `terminal`
 - `cd frontend`
 - `npm install`
 - `npm start`
