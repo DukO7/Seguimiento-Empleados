@@ -36,7 +36,7 @@ Se procede a la instalacion y levantamiento del backend:
 
 - `bash`
 - `cd backend`
-- `npm install`
+- `npm install express mysql bcryptjs jsonwebtoken cors uuid`
   
 Para iniciar el servidor, ejecuta:
 
