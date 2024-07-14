@@ -13,10 +13,10 @@ import { UserContext } from './Context/UserContext';
 import { useNavigate } from "react-router-dom";
 const Beneficiarios = () => {
     const { user } = useContext(UserContext);
-    console.log('User1:', user);
+    // console.log('User1:', user);
     const navigate = useNavigate();
     useEffect(() => {
-        console.log('User:', user);
+        // console.log('User:', user);
         if (!user) {
             navigate("/");
         } else {
@@ -121,7 +121,7 @@ const Beneficiarios = () => {
             id: index,// Asegura un identificador único para cada fila
             uuid: bene.id 
         }));
-        // console.log('Beneficiarios con nombre de empleado:', beneficiarios);
+        //  console.log('Beneficiarios con nombre de empleado:', beneficiarios);
         setEmployees(beneficiarios);
         setRows(beneficiarios);
     } catch (error) {
@@ -162,7 +162,8 @@ const handleChangeEdit = (event) => {
         { field: "apellido_paterno", headerName: "Apellido Paterno Beneficiario", width: 210 },
         { field: "apellido_materno", headerName: "Apellido Materno Beneficiario", width: 210 },
         { field: "parentesco", headerName: "Parentesco", width: 110 },
-    ]
+    ];
+    
     if (user && user?.user.es_admin) {
         columns.push({
             field: 'actions',
@@ -178,7 +179,28 @@ const handleChangeEdit = (event) => {
                 </Tooltip>,
             ],
         });
+    } else {
+        // Agrega acciones solo si el beneficiario corresponde al usuario actual
+        columns.push({
+            field: 'actions',
+            type: 'actions',
+            headerName: 'Acciones',
+            width: 90,
+            getActions: (params) => [
+                params.row.empleado_id === user?.user.id ? (
+                    <Tooltip title="Editar Beneficiario" placement="top">
+                        <GridActionsCellItem icon={<EditIcon sx={{ color: '#243757' }} />} label="Editar" onClick={() => handleEdit(params.row)} />
+                    </Tooltip>
+                ) : null, // No muestra ninguna acción si no coincide el UUID
+                params.row.empleado_id === user?.user.id ? (
+                    <Tooltip title="Eliminar Beneficiario" placement="top">
+                        <GridActionsCellItem icon={<DeleteIcon sx={{ color: 'red' }} />} label="Eliminar" onClick={() => handleDelete(params.row.uuid)} />
+                    </Tooltip>
+                ) : null
+            ],
+        });
     }
+    
 
     const [filterText, setFilterText] = useState('');
     const [rows, setRows] = useState([]);

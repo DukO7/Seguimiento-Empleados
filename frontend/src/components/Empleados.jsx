@@ -15,9 +15,10 @@ import AgregarEmpleado from './AgregarEmpleado';
 import AgregarBeneficiario from './AgregarBeneficiario';
 import { UserContext } from './Context/UserContext';
 import { useNavigate } from "react-router-dom";
+import BlockIcon from '@mui/icons-material/Block';
 const EmployeeTable = () => {
     const { user } = useContext(UserContext);
-    // console.log('datos que llegan:',user.user.es_admin);
+    //  console.log('datos que llegan:',user.user);
     const navigate = useNavigate();
     useEffect(() => {
         
@@ -40,22 +41,22 @@ const EmployeeTable = () => {
     const [userIdToDelete, setUserIdToDelete] = useState(null);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const handleEdit = (row) => {
-        console.log('Row data:', row);
+        
         setEditData(row);
         setOpenEdit(true);
     };
     const handleDelete = (id) => {
-        console.log('id data:', id);
+        
         setUserIdToDelete(id);
         setOpenDeleteDialog(true);
     };
     const handleVer = (row) => {
-        console.log('Row data:', row);
+        
         setVerData(row);
         setOpenVer(true);
     };
     const handleOpcion = (row) => {
-        console.log('Row data:', row);
+        
         setVerData(row);
         setOpenOpcion(true);
     };
@@ -329,13 +330,22 @@ const EmployeeTable = () => {
                 headerName: 'Beneficiarios',
                 width: 110,
                 getActions: (params) => [
-                    <Tooltip title="Ver Beneficiarios" placement="top">
+                    
+                    // Verificar si el UUID del usuario coincide con el UUID del empleado para permitir ver/modificar beneficiarios
+                    user?.user.id === params.row.uuid ? 
+                    
+                    (<Tooltip title="Ver/Añadir Beneficiarios" placement="top">
                         <GridActionsCellItem icon={<Diversity3Icon sx={{ color: '#353432' }} />} label="Beneficiarios" onClick={() => handleOpcion(params.row)} />
-                    </Tooltip>
+                    </Tooltip>) :
+                    (<Tooltip title="Acceso Restringido" placement="top">
+                        <BlockIcon sx={{ color: 'grey' }} />
+                    </Tooltip>)
                 ],
             }
         );
     }
+    
+
 
     const [filterText, setFilterText] = useState('');
     const [rows, setRows] = useState([]);
