@@ -16,18 +16,20 @@ import AgregarBeneficiario from './AgregarBeneficiario';
 import { UserContext } from './Context/UserContext';
 import { useNavigate } from "react-router-dom";
 import BlockIcon from '@mui/icons-material/Block';
-const EmployeeTable = () => {
+import Avatar from '@mui/material/Avatar';
+const Empleados = () => {
     const { user } = useContext(UserContext);
+    const [previewUrl, setPreviewUrl] = useState('');
     //  console.log('datos que llegan:',user.user);
     const navigate = useNavigate();
     useEffect(() => {
-        
+
         if (!user) {
             navigate("/");
         } else {
             fetchEmployees();
         }
-    }, [user,navigate]);
+    }, [user, navigate]);
     const [open, setOpen] = useState(false);
     const [openedit, setOpenEdit] = useState(false);
     const [openever, setOpenVer] = useState(false);
@@ -41,22 +43,23 @@ const EmployeeTable = () => {
     const [userIdToDelete, setUserIdToDelete] = useState(null);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const handleEdit = (row) => {
-        
+        setPreviewUrl(row.fotografia);
+        console.log(row);
         setEditData(row);
         setOpenEdit(true);
     };
     const handleDelete = (id) => {
-        
+
         setUserIdToDelete(id);
         setOpenDeleteDialog(true);
     };
     const handleVer = (row) => {
-        
+
         setVerData(row);
         setOpenVer(true);
     };
     const handleOpcion = (row) => {
-        
+
         setVerData(row);
         setOpenOpcion(true);
     };
@@ -92,7 +95,27 @@ const EmployeeTable = () => {
             console.error("Error al agregar empleado:", error);
         }
     };
-
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const base64String = reader.result;
+                
+                // Actualiza el preview URL con la imagen completa en base64
+                setPreviewUrl(base64String);
+    
+                // Luego actualiza el estado con la parte base64 completa, incluyendo el MIME type
+                setEditData(prevData => ({
+                    ...prevData,
+                    foto: base64String  // Mantén el MIME type original
+                }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    
+    
     const handleSubmitBene = async (employeeData) => {
         try {
             // Combina los datos del beneficiario con el uuid del empleado proveniente de verData
@@ -176,7 +199,6 @@ const EmployeeTable = () => {
     };
     ///////////
 
-
     //Formateo para mostrar fecha en texto en el datagrd
     function formatDate(dateString) {
         const date = new Date(dateString);
@@ -243,18 +265,25 @@ const EmployeeTable = () => {
     const handleCloseVerBeneficiarios = () => {
         setOpenVerBeneficiarios(false);
     };
-    //Control de Agregar modal Beneficiarios
-    const handleOpenAgregarBeneficiarios = () => {
-        console.log("Abrir modal para agregar beneficiarios");
-    };
+  
     //Columnas y formateo de datagrid
+    const getImageSrc = (base64Data) => {
+        // Asumiendo que base64Data tiene un prefijo que indica el tipo de imagen
+        const match = base64Data.match(/^data:(image\/[a-z]+);base64,/);
+        if (match) {
+          return base64Data;  // Ya incluye el prefijo correcto
+        } else {
+          // Asignar un prefijo por defecto si no se encuentra uno, o manejar el error
+          return `data:image/jpeg;base64,${base64Data}`;
+        }
+      };
     const columns = [
         {
             field: "fotografia",
             headerName: "Fotografía",
             width: 90,
             renderCell: (params) => (
-                <img src={`data:image/jpeg;base64,${params.value}`} alt="Foto" style={{ height: 50, width: 50, borderRadius: "50%", padding: 2 }}/>
+                <img src={getImageSrc(params.value)} alt="Foto" style={{ height: 50, width: 50, objectFit: 'cover', borderRadius: "50%" }} />
             ),
         },
         { field: "nombre", headerName: "Nombre", width: 130 },
@@ -281,7 +310,7 @@ const EmployeeTable = () => {
             renderCell: (params) => `$${params.value.toLocaleString('es-MX')}`,
         }
     ];
-    
+
     // Condicionales para añadir o no columnas de administrador y usuario
     if (user && user?.user.es_admin) {
         columns.push(
@@ -330,21 +359,21 @@ const EmployeeTable = () => {
                 headerName: 'Beneficiarios',
                 width: 110,
                 getActions: (params) => [
-                    
+
                     // Verificar si el UUID del usuario coincide con el UUID del empleado para permitir ver/modificar beneficiarios
-                    user?.user.id === params.row.uuid ? 
-                    
-                    (<Tooltip title="Ver/Añadir Beneficiarios" placement="top">
-                        <GridActionsCellItem icon={<Diversity3Icon sx={{ color: '#353432' }} />} label="Beneficiarios" onClick={() => handleOpcion(params.row)} />
-                    </Tooltip>) :
-                    (<Tooltip title="Acceso Restringido" placement="top">
-                        <BlockIcon sx={{ color: 'grey' }} />
-                    </Tooltip>)
+                    user?.user.id === params.row.uuid ?
+
+                        (<Tooltip title="Ver/Añadir Beneficiarios" placement="top">
+                            <GridActionsCellItem icon={<Diversity3Icon sx={{ color: '#353432' }} />} label="Beneficiarios" onClick={() => handleOpcion(params.row)} />
+                        </Tooltip>) :
+                        (<Tooltip title="Acceso Restringido" placement="top">
+                            <BlockIcon sx={{ color: 'grey' }} />
+                        </Tooltip>)
                 ],
             }
         );
     }
-    
+
 
 
     const [filterText, setFilterText] = useState('');
@@ -467,6 +496,33 @@ const EmployeeTable = () => {
                 <Dialog open={openedit} onClose={handleCloseEdit}>
                     <DialogTitle>Editar Empleado</DialogTitle>
                     <DialogContent>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',  // Centra los elementos hijos horizontalmente
+                                justifyContent: 'center', // Centra los elementos hijos verticalmente
+                                width: '100%',  // Ocupa el ancho completo del contenedor para asegurar la centralización
+                                marginTop: 2  // Espacio arriba del botón
+                            }}
+                        >
+                            <Avatar
+                                src={`data:image/jpeg;base64,${previewUrl}`}
+                                sx={{ width: 120, height: 120, marginBottom: 2 }}
+                            />
+                            <Button
+                                variant="contained"
+                                component="label"
+                            >
+                                Subir Imagen
+                                <input
+                                    type="file"
+                                    hidden
+                                    onChange={handleFileChange}
+                                    accept="image/*"
+                                />
+                            </Button>
+                        </Box>
                         <TextField
                             margin="dense"
                             name="nombre"
@@ -741,4 +797,4 @@ const EmployeeTable = () => {
     );
 };
 
-export default EmployeeTable;
+export default Empleados;

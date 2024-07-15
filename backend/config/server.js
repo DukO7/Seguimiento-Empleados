@@ -123,21 +123,22 @@ app.post('/empleado', (req, res) => {
 
 //Bloque modificar empleado
 app.put('/empleado/:id', (req, res) => {
-  const { id } = req.params;
-  const { nombre, apellido_paterno, apellido_materno, fecha_ingreso, fecha_nacimiento, puesto, salario, usuario, contraseña } = req.body;
-  const hashedPassword = bcrypt.hashSync(contraseña, 10); // Hashear la nueva contraseña
-
-  const query = 'UPDATE empleados SET nombre = ?, apellido_paterno = ?, apellido_materno = ?, fecha_ingreso = ?, fecha_nacimiento = ?, puesto = ?, salario = ?, usuario = ?, contraseña = ? WHERE id = ?';
-  db.query(query, [nombre, apellido_paterno, apellido_materno, fecha_ingreso, fecha_nacimiento, puesto, salario, usuario, hashedPassword, id], (err, results) => {
-    if (err) {
-      console.error('Error al actualizar empleado:', err);
-      res.status(500).send('Error al actualizar empleado');
-      return;
-    }
-    
-    res.send('Empleado actualizado');
+    const { id } = req.params;
+    const { nombre, apellido_paterno, apellido_materno, fecha_ingreso, fecha_nacimiento, puesto, salario, usuario, contraseña, foto } = req.body;
+    const hashedPassword = bcrypt.hashSync(contraseña, 10); // Hashear la nueva contraseña
+  
+    const query = 'UPDATE empleados SET nombre = ?, apellido_paterno = ?, apellido_materno = ?, fecha_ingreso = ?, fecha_nacimiento = ?, puesto = ?, salario = ?, usuario = ?, contraseña = ?, fotografia = ? WHERE id = ?';
+    db.query(query, [nombre, apellido_paterno, apellido_materno, fecha_ingreso, fecha_nacimiento, puesto, salario, usuario, hashedPassword, foto, id], (err, results) => {
+      if (err) {
+        console.error('Error al actualizar empleado:', err);
+        res.status(500).send('Error al actualizar empleado');
+        return;
+      }
+      
+      res.send('Empleado actualizado');
+    });
   });
-});
+  
 
 //Bloque para eliminar empleado
 app.delete('/empleadodelete/:id', (req, res) => {
